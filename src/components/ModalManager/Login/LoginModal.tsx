@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Alert,
   Box, Button, Grid, IconButton, Snackbar, TextField, Typography,
@@ -72,21 +73,18 @@ export default function LoginModal(props: ILoginProps) {
     setShowLogin(false);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+
     try {
       setErrorMessage('');
       setLoading(true);
-      login(email, password);
+      await login(email, password);
       setShowLogin(false);
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        setErrorMessage(err.message);
-      } else {
-        setErrorMessage('An unexpected error occurred.');
-      }
-    } finally {
-      setLoading(false);
+    } catch (err: any) {
+      setErrorMessage(err.message);
     }
+    setLoading(false);
   };
 
   const handleSignup = () => {

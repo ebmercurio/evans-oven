@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Alert,
   Box, Button, Grid, TextField, Typography,
@@ -32,7 +33,9 @@ export default function Signup(props: ISignupProps) {
     setShowSignup(false);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+
     if (password !== confirmPassword) {
       setError('Passwords do not match');
       return;
@@ -43,15 +46,10 @@ export default function Signup(props: ISignupProps) {
       setLoading(true);
       signup(email, password, displayName);
       setShowSignup(false);
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError('An unexpected error occurred.');
-      }
-    } finally {
-      setLoading(false);
+    } catch (err: any) {
+      setError(err.message);
     }
+    setLoading(false);
   };
 
   const handleLogin = () => {

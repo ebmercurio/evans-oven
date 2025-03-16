@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Alert,
   Box, Button, Grid, TextField, Typography,
@@ -40,22 +41,19 @@ export default function ForgotPassword(props: IForgotPasswordProps) {
     setShowForgotPassword(false);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+
     try {
       setError('');
       setMessage('');
       setLoading(true);
       resetPassword(email);
       setMessage('Check your inbox for further instructions');
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError('An unexpected error occurred.');
-      }
-    } finally {
-      setLoading(false);
+    } catch (err: any) {
+      setError(err.message);
     }
+    setLoading(false);
   };
 
   const handleSignup = () => {
