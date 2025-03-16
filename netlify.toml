@@ -1,0 +1,9 @@
+[build]
+  base = "/"  # Set base directory (leave as "/" for root)
+  command = "npm run build"  # Adjust based on your framework
+  publish = "dist"  # Change to "build" if using Create React App
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
