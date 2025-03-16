@@ -1,3 +1,6 @@
+# Netlify deploy badge
+[![Netlify Status](https://api.netlify.com/api/v1/badges/84102790-392d-4a02-9add-2d8a64fdd97a/deploy-status)](https://app.netlify.com/sites/evans-oven/deploys)
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
