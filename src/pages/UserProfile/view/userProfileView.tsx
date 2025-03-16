@@ -90,11 +90,14 @@ export default function UserProfileView() {
           && userData.name
           && userData.name !== currentUser?.displayName
           && userData.name.length > 0) {
-          console.log(userData.name, 'namee');
           try {
             await updateProfile(firebaseUser, { displayName: userData.name });
-          } catch (er) {
-            console.log(er);
+          } catch (er: unknown) {
+            if (er instanceof Error) {
+              setError(`Failed to update profile: ${er.message}`);
+            } else {
+              setError('Failed to update profile');
+            }
           }
         } else if (editState.photoEdit
           && userData.photo !== currentUser?.photoURL
@@ -113,8 +116,12 @@ export default function UserProfileView() {
           return;
         }
         resetEdits();
-      } catch (err: any) {
-        setError(`Failed to update profile: ${err}`);
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          setError(`Failed to update profile: ${err}`);
+        } else {
+          setError('Failed to update profile');
+        }
       }
     }
     setLoading(false);

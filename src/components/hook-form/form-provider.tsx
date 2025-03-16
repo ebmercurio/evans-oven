@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { ReactNode } from 'react';
 import { FormProvider as Form } from 'react-hook-form';
 
 // ----------------------------------------------------------------------
 interface FormProviderProps {
-  children: any,
+  children: ReactNode,
   onSubmit: () => void,
   methods: any,
 }

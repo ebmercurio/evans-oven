@@ -74,10 +74,7 @@ export default function CreateIngredientParts(props: CreateIngredientPartsProps)
     }
   };
   const handleCreateUnit = () => {
-    console.log(newUnitValue, 'value');
-    console.log(unitsOptions, 'value');
     if (!unitsOptions.some((x) => x.label === newUnitValue)) {
-      console.log('here');
       addUnit(newUnitValue);
       setNewUnitValue('');
     } else {
@@ -87,7 +84,6 @@ export default function CreateIngredientParts(props: CreateIngredientPartsProps)
   };
   const handleCreateNote = () => {
     if (!notesOptions.some((x) => x.label === newNoteValue)) {
-      console.log('here');
       addNote(newNoteValue);
       setNewNoteValue('');
     } else {

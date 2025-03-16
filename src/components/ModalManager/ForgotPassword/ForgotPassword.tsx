@@ -40,19 +40,22 @@ export default function ForgotPassword(props: IForgotPasswordProps) {
     setShowForgotPassword(false);
   };
 
-  const handleSubmit = async (e: any) => {
-    e.preventDefault();
-
+  const handleSubmit = () => {
     try {
       setError('');
       setMessage('');
       setLoading(true);
-      await resetPassword(email);
+      resetPassword(email);
       setMessage('Check your inbox for further instructions');
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('An unexpected error occurred.');
+      }
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const handleSignup = () => {

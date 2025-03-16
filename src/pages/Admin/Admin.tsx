@@ -5,6 +5,7 @@ import {
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import CreateIcon from '@mui/icons-material/Create';
+import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '../../contexts/AuthContext';
 import AddRecipeForm from './AddRecipeForm/addRecipeForm';
 import { whiteBackground } from '../../Constants';
@@ -29,38 +30,52 @@ export default function AdminPage() {
   const [unitsOptions, setUnitsOptions] = useState<RHFSelectOption[]>([]);
   const [notesOptions, setNotesOptions] = useState<RHFSelectOption[]>([]);
 
+  const { data: ingredientsData } = useQuery(['ingredients'], async () => {
+    const res = await getAllUniqueIngredients();
+    return res;
+  });
+
+  const { data: amountsData } = useQuery(['amounts'], async () => {
+    const res = await getAllAmounts();
+    return res;
+  });
+
+  const { data: unitsData } = useQuery(['units'], async () => {
+    const res = await getAllUnits();
+    return res;
+  });
+
+  const { data: notesData } = useQuery(['notes'], async () => {
+    const res = await getAllNotes();
+    return res;
+  });
+
   if (!currentUser || currentUser.email !== 'ebmercurio@gmail.com') {
-    console.log(currentUser?.email, 'email');
     return <Navigate to="/" replace />;
   }
 
   useEffect(() => {
-    const fetchIngredientsListOptions = async () => {
-      const fetchedIngredients = await getAllUniqueIngredients();
-      const transformedIngredients = transformIngredientsToOptions(fetchedIngredients)
+    if (!ingredientsData || !amountsData || !unitsData || !notesData) return;
+    const setIngredientsListOptions = async () => {
+      const transformedIngredients = transformIngredientsToOptions(ingredientsData)
         .sort((a, b) => a.label.localeCompare(b.label));
 
       setIngredientsOptions(transformedIngredients);
 
-      const fetchedAmounts = await getAllAmounts();
-      const transformedAmounts = transformAmountsToOptions(fetchedAmounts)
+      const transformedAmounts = transformAmountsToOptions(amountsData)
         .sort((a, b) => a.label.localeCompare(b.label));
       setAmountsOptions(transformedAmounts);
 
-      const fetchedUnits = await getAllUnits();
-      const transformedUnits = transformUnitsToOptions(fetchedUnits)
+      const transformedUnits = transformUnitsToOptions(unitsData)
         .sort((a, b) => a.label.localeCompare(b.label));
       setUnitsOptions(transformedUnits);
 
-      const fetchedNotes = await getAllNotes();
-      const transformedNotes = transformNotesToOptions(fetchedNotes)
+      const transformedNotes = transformNotesToOptions(notesData)
         .sort((a, b) => a.label.localeCompare(b.label));
       setNotesOptions(transformedNotes);
     };
 
-    fetchIngredientsListOptions();
-
-    console.log(unitsOptions, 'unitsoptions');
+    setIngredientsListOptions();
   }, []);
 
   return (

@@ -32,9 +32,7 @@ export default function Signup(props: ISignupProps) {
     setShowSignup(false);
   };
 
-  const handleSubmit = async (e: any) => {
-    e.preventDefault();
-
+  const handleSubmit = () => {
     if (password !== confirmPassword) {
       setError('Passwords do not match');
       return;
@@ -43,12 +41,17 @@ export default function Signup(props: ISignupProps) {
     try {
       setError('');
       setLoading(true);
-      await signup(email, password, displayName);
+      signup(email, password, displayName);
       setShowSignup(false);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('An unexpected error occurred.');
+      }
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const handleLogin = () => {

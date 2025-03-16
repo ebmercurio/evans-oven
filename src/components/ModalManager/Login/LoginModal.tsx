@@ -72,18 +72,21 @@ export default function LoginModal(props: ILoginProps) {
     setShowLogin(false);
   };
 
-  const handleSubmit = async (e: any) => {
-    e.preventDefault();
-
+  const handleSubmit = () => {
     try {
       setErrorMessage('');
       setLoading(true);
-      await login(email, password);
+      login(email, password);
       setShowLogin(false);
-    } catch (err: any) {
-      setErrorMessage(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setErrorMessage(err.message);
+      } else {
+        setErrorMessage('An unexpected error occurred.');
+      }
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const handleSignup = () => {

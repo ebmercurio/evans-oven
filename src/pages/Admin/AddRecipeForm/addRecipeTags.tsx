@@ -1,10 +1,9 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState, useEffect } from 'react';
 import {
+  Alert,
   Box, Chip, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent,
 } from '@mui/material';
 import { RHFSelectOption } from '../../../interfaces/RHFSelectOption';
-import ITag from '../../../interfaces/ITag';
 import { getAllTags, transformTagsToOptions } from '../../../services/DbService';
 
 interface AddRecipeTagsProps {
@@ -16,6 +15,7 @@ export default function AddRecipeTags({
 }: AddRecipeTagsProps) {
   const [tagsOptions, setTagsOptions] = useState<RHFSelectOption[]>([]);
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([]);
+  const [errorMessage, setErrorMessage] = useState<string>('');
 
   useEffect(() => {
     let isMounted = true;
@@ -27,7 +27,7 @@ export default function AddRecipeTags({
           setTagsOptions(transformedTags);
         }
       } catch (error) {
-        console.error(error);
+        setErrorMessage('Error fetching tags');
       }
     };
 
@@ -40,8 +40,8 @@ export default function AddRecipeTags({
   const handleChange = (event: SelectChangeEvent<string[]>) => {
     const selectedIds = event.target.value as string[];
     setSelectedTagIds(selectedIds);
-    const selectedTags = tagsOptions.filter((option) => selectedIds.includes(option.value))
-      .map((option) => ({ id: option.value, name: option.label }));
+    // const selectedTags = tagsOptions.filter((option) => selectedIds.includes(option.value))
+    //  .map((option) => ({ id: option.value, name: option.label }));
     finalTagsList(selectedIds);
   };
 
@@ -57,7 +57,7 @@ export default function AddRecipeTags({
         sx={{
           width: '500px',
         }}
-        renderValue={(selected) => (
+        renderValue={() => (
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
             {selectedTagIds.map((tagId) => (
               <Chip
@@ -74,6 +74,13 @@ export default function AddRecipeTags({
           </MenuItem>
         ))}
       </Select>
+      {errorMessage && (
+      <Box sx={{ mt: 2 }}>
+        <Alert severity="error">
+          {errorMessage}
+        </Alert>
+      </Box>
+      )}
     </FormControl>
   );
 }

@@ -1,8 +1,10 @@
 /* eslint-disable no-param-reassign */
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import LoadingButton from '@mui/lab/LoadingButton';
 import {
+  Alert,
+  Box,
   Button,
   Dialog,
   DialogActions,
@@ -34,6 +36,7 @@ export default function addCommentForm({
   const newDate = new Date();
   const { currentRecipe, setCurrentRecipe } = useRecipeContext();
   const { currentUser } = useAuth();
+  const [errorMessage, setErrorMessage] = useState<string>('');
 
   const defaultValues = {
     id: '',
@@ -78,8 +81,8 @@ export default function addCommentForm({
 
         reset();
         onClose();
-      } catch (error) {
-        console.error('Error adding comment:', error);
+      } catch (error: unknown) {
+        setErrorMessage('Error adding comment');
       }
     }
   });
@@ -202,6 +205,13 @@ export default function addCommentForm({
             Post
           </LoadingButton>
         </DialogActions>
+        {errorMessage && (
+          <Box sx={{ mt: 2 }}>
+            <Alert severity="error">
+              {errorMessage}
+            </Alert>
+          </Box>
+        )}
       </FormProvider>
     </Dialog>
   );

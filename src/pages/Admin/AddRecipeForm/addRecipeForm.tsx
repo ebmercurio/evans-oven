@@ -6,7 +6,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import Dialog from '@mui/material/Dialog';
-import { Grid } from '@mui/material';
+import { Alert, Box, Grid } from '@mui/material';
 import FormProvider, { RHFTextField } from '../../../components/hook-form/index';
 import AddRecipeIngredients from './addRecipeIngredients';
 import AddRecipeTags from './addRecipeTags';
@@ -26,6 +26,7 @@ export default function AddRecipeForm(
 ) {
   const [ingredients, setIngredients] = useState<IRecipeIngredient[]>([]);
   const [tags, setTags] = useState<string[]>([]);
+  const [errorMessage, setErrorMessage] = useState<string>('');
   const newDate = new Date();
 
   const defaultValues = {
@@ -55,7 +56,6 @@ export default function AddRecipeForm(
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      console.log(data.servings, 'data.servings');
       const recipeToAdd: IRecipe = {
         averageRating: 0,
         comments: data.comments,
@@ -72,8 +72,12 @@ export default function AddRecipeForm(
       addRecipe(recipeToAdd);
       reset();
       onClose();
-    } catch (error) {
-      console.error(error);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setErrorMessage(error.message);
+      } else {
+        setErrorMessage('An unexpected error occurred.');
+      }
     }
   });
 
@@ -151,6 +155,13 @@ export default function AddRecipeForm(
           >
             Create Recipe
           </LoadingButton>
+          {errorMessage && (
+          <Box sx={{ mt: 2 }}>
+            <Alert severity="error">
+              {errorMessage}
+            </Alert>
+          </Box>
+          )}
         </DialogActions>
       </FormProvider>
     </Dialog>

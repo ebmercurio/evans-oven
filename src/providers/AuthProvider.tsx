@@ -48,14 +48,9 @@ export function AuthProvider(props: IAuthProvierProps) {
   }, [auth]);
 
   async function signup(email: string, password: string, displayName: string) {
-    try {
-      const cred = await createUserWithEmailAndPassword(auth, email, password);
-      await sendEmailVerification(cred.user);
-      await createUserInFirestore(cred.user, displayName); // Create Firestore user document
-    } catch (error) {
-      console.error('Signup error:', error);
-      throw error; // Rethrow if you want to handle it further up the call chain
-    }
+    const cred = await createUserWithEmailAndPassword(auth, email, password);
+    await sendEmailVerification(cred.user);
+    await createUserInFirestore(cred.user, displayName); // Create Firestore user document
   }
 
   async function updateFavorites(recipeId: string) {

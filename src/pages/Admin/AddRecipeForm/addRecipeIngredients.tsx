@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query';
 import { useState, useEffect } from 'react';
 import LoadingButton from '@mui/lab/LoadingButton';
 import {
@@ -33,6 +34,26 @@ interface AddRecipeIngredientsProps {
   finalIngredientsList: (recipeIngredients: IRecipeIngredient[]) => void;
 }
 
+const defaultIngredient: IIngredient = {
+  id: '',
+  name: '',
+};
+
+const defaultAmount: IAmount = {
+  id: '',
+  name: '',
+};
+
+const defaultUnit: IUnit = {
+  id: '',
+  name: '',
+};
+
+const defaultNote: INote = {
+  id: '',
+  note: '',
+};
+
 export default function AddRecipeIngredients(props: AddRecipeIngredientsProps) {
   const { isSubmitting, finalIngredientsList } = props;
 
@@ -43,10 +64,30 @@ export default function AddRecipeIngredients(props: AddRecipeIngredientsProps) {
 
   const [ingredientsList, setIngredientsList] = useState<IRecipeIngredient[]>([]);
 
-  const [selectedIngredient, setSelectedIngredient] = useState<IIngredient>(null!);
-  const [selectedAmount, setSelectedAmount] = useState<IAmount>(null!);
-  const [selectedUnit, setSelectedUnit] = useState<IUnit>(null!);
-  const [selectedNotes, setSelectedNotes] = useState<INote>(null!);
+  const [selectedIngredient, setSelectedIngredient] = useState<IIngredient>(defaultIngredient);
+  const [selectedAmount, setSelectedAmount] = useState<IAmount>(defaultAmount);
+  const [selectedUnit, setSelectedUnit] = useState<IUnit>(defaultUnit);
+  const [selectedNotes, setSelectedNotes] = useState<INote>(defaultNote);
+
+  const { data: ingredientsData } = useQuery(['ingredients'], async () => {
+    const res = await getAllUniqueIngredients();
+    return res;
+  });
+
+  const { data: amountsData } = useQuery(['amounts'], async () => {
+    const res = await getAllAmounts();
+    return res;
+  });
+
+  const { data: unitsData } = useQuery(['units'], async () => {
+    const res = await getAllUnits();
+    return res;
+  });
+
+  const { data: notesData } = useQuery(['notes'], async () => {
+    const res = await getAllNotes();
+    return res;
+  });
 
   const [error, setError] = useState<string>('');
   // const [openTooltip, setOpenTooltip] = useState<boolean>(false);
@@ -57,31 +98,26 @@ export default function AddRecipeIngredients(props: AddRecipeIngredientsProps) {
 
   useEffect(() => {
     const fetchIngredientsListOptions = async () => {
-      const fetchedIngredients = await getAllUniqueIngredients();
-      const transformedIngredients = transformIngredientsToOptions(fetchedIngredients)
+      if (!ingredientsData || !amountsData || !unitsData || !notesData) return;
+      const transformedIngredients = transformIngredientsToOptions(ingredientsData)
         .sort((a, b) => a.label.localeCompare(b.label));
 
       setIngredientsOptions(transformedIngredients);
 
-      const fetchedAmounts = await getAllAmounts();
-      const transformedAmounts = transformAmountsToOptions(fetchedAmounts)
+      const transformedAmounts = transformAmountsToOptions(amountsData)
         .sort((a, b) => a.label.localeCompare(b.label));
       setAmountsOptions(transformedAmounts);
 
-      const fetchedUnits = await getAllUnits();
-      const transformedUnits = transformUnitsToOptions(fetchedUnits)
+      const transformedUnits = transformUnitsToOptions(unitsData)
         .sort((a, b) => a.label.localeCompare(b.label));
       setUnitsOptions(transformedUnits);
 
-      const fetchedNotes = await getAllNotes();
-      const transformedNotes = transformNotesToOptions(fetchedNotes)
+      const transformedNotes = transformNotesToOptions(notesData)
         .sort((a, b) => a.label.localeCompare(b.label));
       setNotesOptions(transformedNotes);
     };
 
     fetchIngredientsListOptions();
-
-    console.log(unitsOptions, 'unitsoptions');
   }, []);
 
   const handleIngredientChange = async (value: string) => {
@@ -104,7 +140,6 @@ export default function AddRecipeIngredients(props: AddRecipeIngredientsProps) {
 
   const handleUnitChange = async (value: string) => {
     const unit = await getUnitById(value);
-    console.log(unit, 'unit');
     setSelectedUnit(unit);
   };
 

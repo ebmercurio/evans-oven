@@ -42,11 +42,15 @@ export default function SearchBox(props: ISearchBoxProps) {
     },
   );
 
-  useEffect(() => {
-    if (error) {
-      console.error('Error fetching all recipes:', error);
-    }
-  }, [error]);
+  if (error) {
+    return (
+      <Box>
+        <Typography>
+          Error loading recipes
+        </Typography>
+      </Box>
+    );
+  }
 
   const handleClose = () => {
     setShow(false);

@@ -3,6 +3,8 @@ import {
   Link as MuiLink,
   Grid,
   Typography,
+  Alert,
+  Box,
 } from '@mui/material';
 import { Favorite, FavoriteBorder } from '@mui/icons-material';
 
@@ -20,6 +22,8 @@ export default function RecipeImage() {
   const { currentUser, setCurrentUser } = useAuth();
   const { setShowLoginModal, setTriggerFavMessage } = useModal();
   const [isFavorited, setIsFavorited] = useState<boolean>(false);
+  const [success, setSuccess] = useState<string>('');
+  const [errorMessage, setErrorMessage] = useState<string>('');
 
   const handleFavoriteClick = async () => {
     if (currentUser) {
@@ -49,10 +53,11 @@ export default function RecipeImage() {
           text: 'Check out this awesome recipe!',
           url: window.location.href,
         })
-        .then(() => console.log('Successful share'))
-        .catch((error) => console.error('Error sharing:', error));
+        .then(() => setSuccess('Recipe shared successfully!'))
+        .then(() => setTimeout(() => setSuccess(''), 3000))
+        .catch((error) => setErrorMessage(error.message));
     } else {
-      alert('Your browser does not support the share feature.');
+      setErrorMessage('Your browser does not support the share feature.');
     }
   };
 
@@ -103,6 +108,20 @@ export default function RecipeImage() {
               Share
             </Typography>
           </MuiLink>
+          {success && (
+          <Box sx={{ mt: 2 }}>
+            <Alert severity="success">
+              {success}
+            </Alert>
+          </Box>
+          )}
+          {errorMessage && (
+          <Box sx={{ mt: 2 }}>
+            <Alert severity="error">
+              {errorMessage}
+            </Alert>
+          </Box>
+          )}
         </Grid>
       </Grid>
     </Grid>
