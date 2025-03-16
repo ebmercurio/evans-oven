@@ -7,3 +7,10 @@
   from = "/*"
   to = "/index.html"
   status = 200
+
+[[redirects]]
+  from = "http://www.evens-oven.com/*"
+  to = "https://evans-oven.com/:splat"
+  status = 301
+  force = true
+
