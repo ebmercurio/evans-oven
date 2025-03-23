@@ -41,14 +41,12 @@ export default function ForgotPassword(props: IForgotPasswordProps) {
     setShowForgotPassword(false);
   };
 
-  const handleSubmit = async (e: any) => {
-    e.preventDefault();
-
+  const handleSubmit = async () => {
     try {
       setError('');
       setMessage('');
       setLoading(true);
-      resetPassword(email);
+      await resetPassword(email);
       setMessage('Check your inbox for further instructions');
     } catch (err: any) {
       setError(err.message);
@@ -72,7 +70,14 @@ export default function ForgotPassword(props: IForgotPasswordProps) {
       closeModal={closeModal}
       isLoading={loading}
     >
-      <Box sx={{ padding: 2, maxWidth: 400, backgroundColor: whiteBackground }}>
+      <Box
+        component="form"
+        sx={{ padding: 2, maxWidth: 400, backgroundColor: whiteBackground }}
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmit();
+        }}
+      >
         <Grid
           container
           direction="column"

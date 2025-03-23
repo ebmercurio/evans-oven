@@ -51,47 +51,55 @@ export default function HomeHero() {
   };
 
   return (
-    <>
-      <Grid
-        container
-        id="homeHero"
-        data-testid="homeHero"
-        sx={{
-          background: 'linear-gradient(to bottom, #6B8E72, #7C9D88)',
-          borderRadius: '12px',
-          textAlign: 'center',
-          width: '100%',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '24px 16px',
-        }}
-      >
-        <Grid item xs={12} sm={6}>
-          <Typography sx={{
-            fontFamily: straightFont,
-            fontSize: '28px',
-            color: blackText,
-            fontWeight: 'bold',
-            letterSpacing: '0.5px',
+    <Box
+      sx={{
+        background: 'linear-gradient(to bottom, #6B8E72, #7C9D88)',
+
+      }}
+    >
+      <Container>
+        <Grid
+          container
+          id="homeHero"
+          data-testid="homeHero"
+          sx={{
+            borderRadius: '12px',
+            textAlign: 'center',
+            width: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '24px 16px',
           }}
-          >
-            Real Recipes. Real Simple.
-          </Typography>
+        >
+          <Grid item xs={12} sm={6}>
+            <Typography
+              variant="h4"
+              sx={{
+                fontFamily: straightFont,
+                color: blackText,
+                fontWeight: 'bold',
+                letterSpacing: '0.5px',
+              }}
+            >
+              Real Recipes. Real Simple.
+            </Typography>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Typography
+              variant="h4"
+              sx={{
+                fontFamily: cursiveFont,
+                color: warmGold,
+                fontWeight: 'bold',
+                textShadow: '1px 1px 4px rgba(0,0,0,0.15)',
+              }}
+            >
+              Fake Images.
+            </Typography>
+          </Grid>
         </Grid>
-        <Grid item xs={12} sm={6}>
-          <Typography
-            sx={{
-              fontFamily: cursiveFont,
-              fontSize: '42px',
-              color: warmGold,
-              fontWeight: 'bold',
-              textShadow: '1px 1px 4px rgba(0,0,0,0.15)',
-            }}
-          >
-            Fake Images.
-          </Typography>
-        </Grid>
-      </Grid>
+      </Container>
       <Box
         sx={{
           backgroundColor: whiteBackground,
@@ -220,6 +228,6 @@ export default function HomeHero() {
           </Grid>
         </Container>
       </Box>
-    </>
+    </Box>
   );
 }

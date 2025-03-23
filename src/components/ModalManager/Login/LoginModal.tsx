@@ -38,13 +38,13 @@ export default function LoginModal(props: ILoginProps) {
   } = props;
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const [errorMessage, setErrorMessage] = useState<string>('');
+  const [error, setError] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const { login } = useAuth();
 
   useEffect(() => {
     if (showLogin) {
-      setErrorMessage(''); // Reset error message when the modal is opened
+      setError(''); // Reset error message when the modal is opened
     }
 
     if (triggerFavMessage) {
@@ -73,16 +73,14 @@ export default function LoginModal(props: ILoginProps) {
     setShowLogin(false);
   };
 
-  const handleSubmit = async (e: any) => {
-    e.preventDefault();
-
+  const handleSubmit = async () => {
     try {
-      setErrorMessage('');
+      setError('');
       setLoading(true);
       await login(email, password);
       setShowLogin(false);
     } catch (err: any) {
-      setErrorMessage(err.message);
+      setError(err.message);
     }
     setLoading(false);
   };
@@ -98,7 +96,15 @@ export default function LoginModal(props: ILoginProps) {
       closeModal={closeModal}
       isLoading={loading}
     >
-      <Box sx={{ padding: 2, maxWidth: 400, backgroundColor: whiteBackground }}>
+      <Box
+        component="form"
+        sx={{ padding: 2, maxWidth: 400, backgroundColor: whiteBackground }}
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmit();
+        }}
+      >
+
         <Grid
           container
           direction="column"
@@ -200,6 +206,7 @@ export default function LoginModal(props: ILoginProps) {
             <Button
               variant="contained"
               color="primary"
+              type="submit"
               onClick={handleSubmit}
               sx={{
                 mx: 1,
@@ -235,33 +242,34 @@ export default function LoginModal(props: ILoginProps) {
             </Button>
           </Grid>
         </Grid>
-        {errorMessage && (
+
+        {error && (
           <Box sx={{ mt: 2 }}>
             <Alert severity="error">
-              {errorMessage}
+              {error}
             </Alert>
           </Box>
         )}
         {triggerFavMessage && (
-        <Snackbar
-          open={triggerFavMessage}
-          autoHideDuration={3000}
-          onClose={() => setTriggerFavMessage(false)}
-          action={(
-            <IconButton
-              size="small"
-              aria-label="close"
-              color="inherit"
-              onClick={() => setTriggerFavMessage(false)}
-            >
-              <CloseIcon />
-            </IconButton>
+          <Snackbar
+            open={triggerFavMessage}
+            autoHideDuration={3000}
+            onClose={() => setTriggerFavMessage(false)}
+            action={(
+              <IconButton
+                size="small"
+                aria-label="close"
+                color="inherit"
+                onClick={() => setTriggerFavMessage(false)}
+              >
+                <CloseIcon />
+              </IconButton>
                 )}
-        >
-          <Alert onClose={() => setTriggerFavMessage(false)} severity="error">
-            You must be logged in to favorite a recipe!
-          </Alert>
-        </Snackbar>
+          >
+            <Alert onClose={() => setTriggerFavMessage(false)} severity="error">
+              You must be logged in to favorite a recipe!
+            </Alert>
+          </Snackbar>
         )}
         {triggerCommentMessage && (
           <Snackbar

@@ -33,9 +33,7 @@ export default function Signup(props: ISignupProps) {
     setShowSignup(false);
   };
 
-  const handleSubmit = async (e: any) => {
-    e.preventDefault();
-
+  const handleSubmit = async () => {
     if (password !== confirmPassword) {
       setError('Passwords do not match');
       return;
@@ -44,7 +42,7 @@ export default function Signup(props: ISignupProps) {
     try {
       setError('');
       setLoading(true);
-      signup(email, password, displayName);
+      await signup(email, password, displayName);
       setShowSignup(false);
     } catch (err: any) {
       setError(err.message);
@@ -69,7 +67,14 @@ export default function Signup(props: ISignupProps) {
       closeModal={closeModal}
       isLoading={loading}
     >
-      <Box sx={{ padding: 2, maxWidth: 400, backgroundColor: whiteBackground }}>
+      <Box
+        component="form"
+        sx={{ padding: 2, maxWidth: 400, backgroundColor: whiteBackground }}
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmit();
+        }}
+      >
         <Grid
           container
           direction="column"
@@ -235,6 +240,7 @@ export default function Signup(props: ISignupProps) {
             </Button>
             <Button
               variant="contained"
+              type="submit"
               onClick={handleSubmit}
               sx={{
                 mx: 1,
