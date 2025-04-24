@@ -57,20 +57,19 @@ export default function HomeHero() {
 
       }}
     >
-      <Container>
+      <Container sx={{ padding: 0 }}>
         <Grid
           container
           id="homeHero"
           data-testid="homeHero"
           sx={{
             borderRadius: '12px',
-            textAlign: 'center',
             width: '100%',
             display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '24px 16px',
+            padding: '24px 0px',
           }}
+          justifyContent="space-between"
+          alignItems="center"
         >
           <Grid item xs={12} sm={6}>
             <Typography
@@ -80,6 +79,7 @@ export default function HomeHero() {
                 color: blackText,
                 fontWeight: 'bold',
                 letterSpacing: '0.5px',
+                textAlign: { xs: 'center', sm: 'left' }, // Center on small screens, left on larger
               }}
             >
               Real Recipes. Real Simple.
@@ -93,6 +93,7 @@ export default function HomeHero() {
                 color: warmGold,
                 fontWeight: 'bold',
                 textShadow: '1px 1px 4px rgba(0,0,0,0.15)',
+                textAlign: { xs: 'center', sm: 'right' }, // Center on small screens, right on larger
               }}
             >
               Fake Images.

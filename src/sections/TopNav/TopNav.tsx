@@ -1,5 +1,6 @@
 import {
-  AppBar, Button, Container, Toolbar, Box, Typography, styled,
+  AppBar, Button, Container, Toolbar, Typography,
+  Grid,
 } from '@mui/material';
 import { Link, useLocation } from 'react-router-dom';
 import './index.css';
@@ -10,22 +11,15 @@ import AccountMenu from './AccountMenu';
 import { useAuth } from '../../contexts/AuthContext';
 import { useModal } from '../../providers/ModalProvider';
 
-const StyledTypography = styled(Typography)({
-  fontFamily: straightFont,
-  fontSize: '25px',
-  color: 'black',
-});
-
 export default function TopNav() {
   const { currentUser } = useAuth();
   const { setShowLoginModal } = useModal();
+  const url = useLocation().pathname;
 
   const handleLoginClick = () => {
     setShowLoginModal(true);
   };
 
-  const url = useLocation().pathname;
-  console.log(url, 'url');
   return (
     <AppBar
       position="fixed"
@@ -38,55 +32,92 @@ export default function TopNav() {
       }}
     >
       <Container maxWidth="lg">
-        <Toolbar sx={{ zIndex: 9998 }}>
-          <Box
+        <Toolbar disableGutters sx={{ zIndex: 9998, padding: 0 }}>
+          <Grid
+            container
             sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
               padding: 0,
-              flexGrow: 1,
             }}
           >
-            <Button
-              id="logoButton"
-              data-testid="logoButton"
-              component={Link}
-              to="/home"
-            >
-              <TopNavLogo />
-            </Button>
-          </Box>
-          <Box>
-
-            {url !== '/home' && (
-            <Button component={Link} to="/home">
-              <StyledTypography>
-                Home
-              </StyledTypography>
-            </Button>
-            )}
-            {url !== '/recipes' && (
-            <Button id="recipesButton" component={Link} to="/recipes">
-              <StyledTypography>
-                Recipes
-              </StyledTypography>
-            </Button>
-            )}
-
-            <SearchBar />
-          </Box>
-          {currentUser != null ? (
-            <AccountMenu />
-          ) : (
-            <Button onClick={handleLoginClick}>
-              <Typography sx={{
-                fontFamily: straightFont,
-                fontSize: '25px',
-                color: 'success.main',
+            <Grid
+              item
+              xs={4}
+              sx={{
+                display: 'flex',
+                justifyContent: 'left',
+                alignItems: 'center',
+                padding: 0,
               }}
+            >
+              <Button
+                id="logoButton"
+                data-testid="logoButton"
+                component={Link}
+                to="/home"
               >
-                Login
-              </Typography>
-            </Button>
-          )}
+                <TopNavLogo />
+              </Button>
+            </Grid>
+
+            <Grid
+              item
+              xs={8}
+              sx={{
+                display: 'flex',
+                justifyContent: { xs: 'left', sm: 'right' },
+                alignItems: 'center',
+                padding: 0,
+              }}
+            >
+
+              {url !== '/home' && (
+              <Button component={Link} to="/home">
+                <Typography
+                  fontFamily={straightFont}
+                  sx={{
+                    fontSize: { xs: '20px', sm: '25px' },
+                  }}
+                  color="black"
+                >
+                  Home
+                </Typography>
+              </Button>
+              )}
+              {url !== '/recipes' && (
+              <Button id="recipesButton" component={Link} to="/recipes">
+                <Typography
+                  fontFamily={straightFont}
+                  sx={{
+                    fontSize: { xs: '20px', sm: '25px' },
+                  }}
+                  color="black"
+                >
+                  Recipes
+                </Typography>
+              </Button>
+              )}
+
+              <SearchBar />
+              {currentUser != null ? (
+                <AccountMenu />
+              ) : (
+                <Button onClick={handleLoginClick}>
+                  <Typography
+                    sx={{
+                      fontFamily: straightFont,
+                      fontSize: { xs: '20px', sm: '25px' },
+                      color: 'success.main',
+                    }}
+                  >
+                    Login
+                  </Typography>
+                </Button>
+              )}
+            </Grid>
+          </Grid>
         </Toolbar>
       </Container>
     </AppBar>
