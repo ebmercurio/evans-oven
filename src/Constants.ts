@@ -3,7 +3,6 @@ export const ApiBaseUrl = 'https://localhost:5000';
 export const grey = '#f2f2f2';
 export const secondary = '#D98C5F';
 export const primary = '#6B8E72'; // Green
-export const darkPrimary = '#5A725C'; // Deep Olive
 export const warmGold = '#E3B778'; // New Gold Accent
 export const darkGold = '#C28A45';
 export const favoritedColor = '#FF6347'; // Tomato Red

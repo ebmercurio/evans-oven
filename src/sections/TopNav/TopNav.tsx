@@ -1,7 +1,7 @@
 import {
   AppBar, Button, Container, Toolbar, Box, Typography, styled,
 } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import './index.css';
 import TopNavLogo from './TopNavLogo';
 import SearchBar from '../../components/SearchEmblem/SearchEmblem';
@@ -24,6 +24,8 @@ export default function TopNav() {
     setShowLoginModal(true);
   };
 
+  const url = useLocation().pathname;
+  console.log(url, 'url');
   return (
     <AppBar
       position="fixed"
@@ -47,22 +49,28 @@ export default function TopNav() {
               id="logoButton"
               data-testid="logoButton"
               component={Link}
-              to="/"
+              to="/home"
             >
               <TopNavLogo />
             </Button>
           </Box>
           <Box>
-            <Button component={Link} to="/">
+
+            {url !== '/home' && (
+            <Button component={Link} to="/home">
               <StyledTypography>
                 Home
               </StyledTypography>
             </Button>
+            )}
+            {url !== '/recipes' && (
             <Button id="recipesButton" component={Link} to="/recipes">
               <StyledTypography>
                 Recipes
               </StyledTypography>
             </Button>
+            )}
+
             <SearchBar />
           </Box>
           {currentUser != null ? (

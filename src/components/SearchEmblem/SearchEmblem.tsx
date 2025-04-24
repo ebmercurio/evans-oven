@@ -11,7 +11,7 @@ export default function SearchEmblem() {
 
   return (
     <>
-      <IconButton onClick={() => setSearch(true)}>
+      <IconButton style={{ marginRight: 1 }} onClick={() => setSearch(true)}>
         <SearchIcon sx={{ color: primary }} />
       </IconButton>
 
