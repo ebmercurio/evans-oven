@@ -1,18 +1,8 @@
-import { Typography } from '@mui/material';
-import { primary } from '../../Constants';
+import logo from '../../assets/evansOven.png';
 
 function TopNavLogo() {
   return (
-    <Typography sx={{
-      fontFamily: 'Caveat',
-      fontSize: '45px',
-      fontWeight: 500,
-      color: primary,
-      textTransform: 'lowercase',
-    }}
-    >
-      Evan&apos;s Oven
-    </Typography>
+    <img src={logo} alt="Site Logo" width="100px" height="100px" />
   );
 }
 

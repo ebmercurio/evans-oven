@@ -22,7 +22,7 @@ function App() {
           <ModalManager />
           <Layout>
             <Routes>
-              <Route path="/" element={<Home />} />
+              <Route path="/home" element={<Home />} />
               <Route path="/recipes" element={<RecipesView />} />
               <Route path="/recipe/:documentId" element={<RecipeView />} />
               <Route path="/recipeTag/:tagId" element={<RecipesByTagView />} />
