@@ -14,7 +14,7 @@ import { useAuth } from '../../../contexts/AuthContext';
 const OPTIONS = [
   {
     label: 'Home',
-    linkTo: '/',
+    linkTo: '/home',
   },
   {
     label: 'Profile',

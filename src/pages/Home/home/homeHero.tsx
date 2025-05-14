@@ -82,7 +82,7 @@ export default function HomeHero() {
                 textAlign: { xs: 'center', sm: 'left' }, // Center on small screens, left on larger
               }}
             >
-              Real Recipes. Real Simple.
+              No stories.
             </Typography>
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -96,7 +96,7 @@ export default function HomeHero() {
                 textAlign: { xs: 'center', sm: 'right' }, // Center on small screens, right on larger
               }}
             >
-              Fake Images.
+              Just recipes.
             </Typography>
           </Grid>
         </Grid>

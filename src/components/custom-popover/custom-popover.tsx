@@ -28,11 +28,11 @@ export default function CustomPopover(
       onClose={handleClose} // This is already present, ensure it is doing the right thing
       anchorOrigin={{
         vertical: 'bottom',
-        horizontal: 'right',
+        horizontal: 'left',
       }}
       transformOrigin={{
         vertical: 'top',
-        horizontal: 'center',
+        horizontal: 'left',
       }}
       sx={{ zIndex: 9999 }}
       slotProps={{
