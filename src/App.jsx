@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router';
+import { Routes, Route, Navigate } from 'react-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ModalProvider } from './providers/ModalProvider'; // Adjust the path as necessary
 import Layout from './Layout';
@@ -22,6 +22,7 @@ function App() {
           <ModalManager />
           <Layout>
             <Routes>
+              <Route path="/" element={<Navigate to="/home" replace />} />
               <Route path="/home" element={<Home />} />
               <Route path="/recipes" element={<RecipesView />} />
               <Route path="/recipe/:documentId" element={<RecipeView />} />
