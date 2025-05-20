@@ -39,7 +39,6 @@ export default function HomeHero() {
     ['homeHeroSmallItems'],
     async () => {
       const res = await getAllHomeHeroSmallItems();
-      console.log('homeHeroSmallItemsData', res);
       return res;
     },
   );

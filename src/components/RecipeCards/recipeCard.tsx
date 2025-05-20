@@ -30,7 +30,6 @@ export default function RecipeCard(props: RecipeCardProps) {
   const [isFavorited, setIsFavorited] = useState<boolean>(false);
   const [triggerEmailVerifyMessage, setTriggerEmailVerifyMessage] = useState(false);
 
-  console.log(recipe, 'recipe');
   const handleFavoriteClick = async () => {
     if (currentUser && auth.currentUser?.emailVerified) {
       await updateUserFavorites(currentUser, recipe.id);

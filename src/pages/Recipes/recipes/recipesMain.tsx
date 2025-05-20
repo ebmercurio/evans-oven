@@ -100,8 +100,6 @@ export default function RecipesMain() {
     );
   }
 
-  console.log('allRecipesData', allRecipesData);
-
   return (
     <Grid container>
       <Grid
