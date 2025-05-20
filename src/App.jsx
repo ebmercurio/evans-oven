@@ -26,7 +26,7 @@ function App() {
               <Route path="/home" element={<Home />} />
               <Route path="/recipes" element={<RecipesView />} />
               <Route path="/recipe/:documentId" element={<RecipeView />} />
-              <Route path="/recipeTag/:tagId" element={<RecipesByTagView />} />
+              <Route path="/recipeTag/:tagName" element={<RecipesByTagView />} />
               <Route path="/me" element={<UserProfileView />} />
               <Route path="/myFavorites" element={<FavoriteRecipesView />} />
               <Route path="/admin" element={<AdminPage />} />

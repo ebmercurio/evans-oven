@@ -3,13 +3,12 @@ import {
   Card,
   Rating,
 } from '@mui/material';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useParams } from 'react-router';
+import { useQuery } from '@tanstack/react-query';
 import RecipeCard from '../../../components/RecipeCards/recipeCard';
-import { getAllRecipes, getTagById } from '../../../services/DbService';
-import { useAuth } from '../../../contexts/AuthContext';
+import { getRecipesByTag } from '../../../services/DbService';
 import IRecipe from '../../../interfaces/IRecipe';
-import ITag from '../../../interfaces/ITag';
 import {
   straightFont, primary, blackText, warmGold,
   whiteBackground,
@@ -17,20 +16,23 @@ import {
 } from '../../../Constants';
 
 export default function RecipesByTag() {
-  const { tagId } = useParams();
-  const [tag, setTag] = useState<ITag>();
-  const [tagRecipes, setTagRecipes] = useState<IRecipe[]>([]);
-  const { currentUser } = useAuth();
+  const { tagName } = useParams();
+  // const [tag, setTag] = useState<string>();
 
   const [latestIndex, setLatestIndex] = useState(0);
   const [popularIndex, setPopularIndex] = useState(0);
   const [allIndex, setAllIndex] = useState(0);
   const batchSize = 6;
 
-  const latestRecipes = [...tagRecipes].sort(
+  const { data: recipesByTag } = useQuery(['recipesByTag'], async () => {
+    const res = await getRecipesByTag(tagName ?? '');
+    return res;
+  });
+
+  const latestRecipes = [...recipesByTag ?? []].sort(
     (a, b) => new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime(),
   );
-  const popularRecipes = [...tagRecipes].sort((a, b) => b.favorites - a.favorites);
+  const popularRecipes = [...recipesByTag ?? []].sort((a, b) => b.favorites - a.favorites);
 
   const handleLoadMore = (section: string) => {
     if (section === 'latest') setLatestIndex((prev) => prev + batchSize);
@@ -38,21 +40,11 @@ export default function RecipesByTag() {
     if (section === 'all') setAllIndex((prev) => prev + batchSize);
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const data = await getAllRecipes();
-      const filteredRecipes = data.filter((recipe) => recipe.tags.includes(tagId ?? ''));
-      setTagRecipes(filteredRecipes);
+  // useEffect(() => {
+  //   setTag(tagName);
+  // }, [tagName]);
 
-      if (tagId) {
-        const tagData = await getTagById(tagId);
-        setTag(tagData);
-      }
-    };
-    fetchData();
-  }, [tagId, currentUser?.favorites]);
-
-  const featuredRecipe = tagRecipes[0];
+  const featuredRecipe = recipesByTag?.[0];
 
   const renderRecipeSection = (recipes: IRecipe[], index: number, section: string) => (
     <Grid container spacing={2}>
@@ -96,9 +88,9 @@ export default function RecipesByTag() {
           alignItems: 'center',
         }}
       >
-        {tag && (
+        {tagName && (
           <Typography sx={{ fontFamily: straightFont, color: primary, fontSize: '35px' }}>
-            {tag.name.split(' ').map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+            {tagName.split(' ').map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
             {' '}
             Recipes
           </Typography>
@@ -201,7 +193,7 @@ export default function RecipesByTag() {
         >
           All Recipes
         </Typography>
-        {renderRecipeSection(tagRecipes, allIndex, 'all')}
+        {renderRecipeSection(recipesByTag ?? [], allIndex, 'all')}
       </Grid>
     </Grid>
   );

@@ -54,53 +54,68 @@ export const transformTagsToOptions = (tags: ITag[]): RHFSelectOption[] => tags.
   label: tag.name,
 }));
 
+// export async function MigrateTagIdToName(dryRun = true) {
+//   const recipesSnapshot = await getDocs(recipesCollection);
+
+//   let total = 0;
+
+//   const updatePromises = recipesSnapshot.docs.map(async (recipeDoc) => {
+//     const recipe = recipeDoc.data();
+//     const tagIds = recipe.tags || [];
+
+//     const tagDocs = await Promise.all(
+//       tagIds.map((tagId: string) => {
+//         const tagRef = doc(db, 'Tags', tagId);
+//         return getDoc(tagRef);
+//       }),
+//     );
+//     // const tagDocs = await Promise.all(
+//     //   tagIds.map((tagId: string) => getDoc(doc(db, 'tags', tagId))),
+//     // );
+
+//     console.log(recipe.title, 'recipetitle');
+//     console.log(tagDocs, 'tagdocs');
+
+//     const tagNames = tagDocs
+//       .filter((tagDoc) => tagDoc.exists())
+//       .map((tagDoc) => tagDoc.data()?.name)
+//       .filter(Boolean);
+
+//     if (dryRun) {
+//       console.log(`Would update recipe "${recipe.title}" (${recipeDoc.id}) with tags:`, tagNames);
+//     } else {
+//       await updateDoc(recipeDoc.ref, { tags: tagNames });
+//       console.log(`✅ Updated "${recipe.title}" (${recipeDoc.id}) with tags:`, tagNames);
+//     }
+
+//     // eslint-disable-next-line no-plusplus
+//     total++;
+//   });
+
+//   await Promise.all(updatePromises);
+
+//   console.log(`\n✅ ${dryRun ? 'Dry run complete' : 'Migration complete'} for ${total} recipes.`);
+// }
+
 export async function getAllHomeHeroItems(): Promise<ICategoryCard[]> {
   const querySnapshot = await getDocs(homeHeroItemsCollection);
 
   // Use Promise.all to wait for all promises to resolve
   const data = await Promise.all(querySnapshot.docs.map(async (document) => {
     const { id } = document;
+    console.log(id, 'id');
     const documentData = document.data();
-    const tagRef = documentData.tag;
-
-    if (!tagRef) {
-      console.error('Tag reference is undefined for document:', document);
-      return null; // Skip this document if the tag reference is undefined
-    }
-
-    let tagData: ITag | null = null;
-    try {
-      const tagDoc = await getDoc(tagRef);
-      if (tagDoc.exists()) {
-        tagData = tagDoc.data() as ITag;
-      } else {
-        console.error('No such tag document:', tagRef.id);
-      }
-    } catch (error) {
-      console.error('Error fetching tag document:', error);
-    }
-
-    if (!tagData) {
-      console.error('Tag data is undefined for document:', document);
-      return null; // Skip this document if the tag data could not be fetched
-    }
-
     const categoryCard: ICategoryCard = {
       id,
-      tag: {
-        id: tagRef.id,
-        name: tagData.name || 'Unknown',
-      },
+      tag: documentData.tag,
       image: documentData.image,
     };
 
+    console.log(categoryCard.tag, 'categoryCard.tag');
     return categoryCard;
   }));
 
-  // Filter out any null items
-  const filteredData = data.filter((item): item is ICategoryCard => item !== null);
-
-  return filteredData;
+  return data;
 }
 export async function getAllHomeHeroSmallItems() {
   const querySnapshot = await getDocs(homeHeroSmallItemsCollection);
@@ -109,46 +124,17 @@ export async function getAllHomeHeroSmallItems() {
   const data = await Promise.all(querySnapshot.docs.map(async (document) => {
     const { id } = document;
     const documentData = document.data();
-    const tagRef = documentData.tag;
-
-    if (!tagRef) {
-      console.error('Tag reference is undefined for document:', document);
-      return null; // Skip this document if the tag reference is undefined
-    }
-
-    let tagData: ITag | null = null;
-    try {
-      const tagDoc = await getDoc(tagRef);
-      if (tagDoc.exists()) {
-        tagData = tagDoc.data() as ITag;
-      } else {
-        console.error('No such tag document:', tagRef.id);
-      }
-    } catch (error) {
-      console.error('Error fetching tag document:', error);
-    }
-
-    if (!tagData) {
-      console.error('Tag data is undefined for document:', document);
-      return null; // Skip this document if the tag data could not be fetched
-    }
 
     const categoryCard: ICategoryCard = {
       id,
-      tag: {
-        id: tagRef.id,
-        name: tagData.name || 'Unknown',
-      },
+      tag: documentData.tag,
       image: documentData.image,
     };
 
     return categoryCard;
   }));
 
-  // Filter out any null items
-  const filteredData = data.filter((item): item is ICategoryCard => item !== null);
-
-  return filteredData;
+  return data;
 }
 export async function getMealTypeCategories() {
   const querySnapshot = await getDocs(mealTypeCategoriesCollection);
@@ -157,36 +143,10 @@ export async function getMealTypeCategories() {
   const data = await Promise.all(querySnapshot.docs.map(async (document) => {
     const { id } = document;
     const documentData = document.data();
-    const tagRef = documentData.tag;
-
-    if (!tagRef) {
-      console.error('Tag reference is undefined for document:', document);
-      return null; // Skip this document if the tag reference is undefined
-    }
-
-    let tagData: ITag | null = null;
-    try {
-      const tagDoc = await getDoc(tagRef);
-      if (tagDoc.exists()) {
-        tagData = tagDoc.data() as ITag;
-      } else {
-        console.error('No such tag document:', tagRef.id);
-      }
-    } catch (error) {
-      console.error('Error fetching tag document:', error);
-    }
-
-    if (!tagData) {
-      console.error('Tag data is undefined for document:', document);
-      return null; // Skip this document if the tag data could not be fetched
-    }
 
     const categoryCard: ICategoryCard = {
       id,
-      tag: {
-        id: tagRef.id,
-        name: tagData.name || 'Unknown',
-      },
+      tag: documentData.tag,
       image: documentData.image,
     };
 
@@ -205,36 +165,9 @@ export async function getPopularCategories() {
   const data = await Promise.all(querySnapshot.docs.map(async (document) => {
     const { id } = document;
     const documentData = document.data();
-    const tagRef = documentData.tag;
-
-    if (!tagRef) {
-      console.error('Tag reference is undefined for document:', document);
-      return null; // Skip this document if the tag reference is undefined
-    }
-
-    let tagData: ITag | null = null;
-    try {
-      const tagDoc = await getDoc(tagRef);
-      if (tagDoc.exists()) {
-        tagData = tagDoc.data() as ITag;
-      } else {
-        console.error('No such tag document:', tagRef.id);
-      }
-    } catch (error) {
-      console.error('Error fetching tag document:', error);
-    }
-
-    if (!tagData) {
-      console.error('Tag data is undefined for document:', document);
-      return null; // Skip this document if the tag data could not be fetched
-    }
-
     const categoryCard: ICategoryCard = {
       id,
-      tag: {
-        id: tagRef.id,
-        name: tagData.name || 'Unknown',
-      },
+      tag: documentData.tag,
       image: documentData.image,
     };
 
@@ -253,36 +186,10 @@ export async function getSpecialDietCategories() {
   const data = await Promise.all(querySnapshot.docs.map(async (document) => {
     const { id } = document;
     const documentData = document.data();
-    const tagRef = documentData.tag;
-
-    if (!tagRef) {
-      console.error('Tag reference is undefined for document:', document);
-      return null; // Skip this document if the tag reference is undefined
-    }
-
-    let tagData: ITag | null = null;
-    try {
-      const tagDoc = await getDoc(tagRef);
-      if (tagDoc.exists()) {
-        tagData = tagDoc.data() as ITag;
-      } else {
-        console.error('No such tag document:', tagRef.id);
-      }
-    } catch (error) {
-      console.error('Error fetching tag document:', error);
-    }
-
-    if (!tagData) {
-      console.error('Tag data is undefined for document:', document);
-      return null; // Skip this document if the tag data could not be fetched
-    }
 
     const categoryCard: ICategoryCard = {
       id,
-      tag: {
-        id: tagRef.id,
-        name: tagData.name || 'Unknown',
-      },
+      tag: documentData.tag,
       image: documentData.image,
     };
 
@@ -294,27 +201,6 @@ export async function getSpecialDietCategories() {
 
   return filteredData;
 }
-
-// export async function getAllHomeBottomItems() {
-//   const querySnapshot = await getDocs(homeBottomItemsCollection);
-//   const data = querySnapshot.docs.map((document) => {
-//     const documentData = document.data();
-//     const foods = (Object.values(documentData.foods) as IRecipe[]).map((food) => ({
-//       id: food.id,
-//       image: food.image,
-//       title: food.title,
-//       description: food.description,
-//     }));
-
-//     const item: IFoodCategory = {
-//       order: documentData.order,
-//       name: documentData.name,
-//       foods,
-//     };
-//     return item;
-//   });
-//   return data;
-// }
 
 export async function getAllUniqueIngredients() {
   const querySnapshot = await getDocs(ingredientsCollection);

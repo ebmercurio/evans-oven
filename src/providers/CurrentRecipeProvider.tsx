@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useMemo, useState } from 'react';
-import { ErrorMessageInterface } from '../components/ErrorDialog/ErrorMessageInterface';
+import React, { useMemo, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import IRecipe, { getDefault } from '../interfaces/IRecipe';
 import { getRecipeById } from '../services/DbService';
 import CurrentRecipeContext from '../contexts/RecipeContext';
@@ -11,45 +11,49 @@ interface ICurrentRecipeProviderProps {
   children: React.ReactNode;
 }
 
-const defaultRecipeObject = getDefault();
-
 export function CurrentRecipeProvider(props: ICurrentRecipeProviderProps) {
   const { children, documentId } = props;
-  const [errorMessage, setErrorMessage] = useState<ErrorMessageInterface>();
+  const [errorMessage, setErrorMessage] = useState<string>();
   const [errorOpen, setErrorOpen] = useState<boolean>(false);
-  const [recipe, setRecipe] = useState<IRecipe>(defaultRecipeObject);
 
-  useEffect(() => {
-    const fetchRecipe = async () => {
-      if (documentId) {
-        try {
-          const recipeData = await getRecipeById(documentId);
-          if (recipeData) {
-            setRecipe(recipeData);
-          }
-        } catch (error: any) {
-          setErrorOpen(true);
-          setErrorMessage(error.message);
+  const {
+    data: currentRecipe = getDefault(), // fallback to default while loading
+  } = useQuery<IRecipe>(
+    ['recipe', documentId],
+    () => {
+      if (!documentId) throw new Error('Document ID is required');
+      return getRecipeById(documentId);
+    },
+    {
+      enabled: !!documentId,
+      onError: (err: unknown) => {
+        if (err instanceof Error) {
+          setErrorMessage(err.message);
+        } else {
+          setErrorMessage('An unknown error occurred.');
         }
-      }
-    };
-    fetchRecipe();
-  }, [documentId]);
+        setErrorOpen(true);
+      },
+    },
+  );
 
   const currentRecipeContextValue = useMemo(
     () => ({
-      currentRecipe: recipe,
-      setCurrentRecipe: (updatedRecipe: IRecipe) => setRecipe(updatedRecipe),
+      currentRecipe,
+      setCurrentRecipe: () => {
+        console.warn('setCurrentRecipe is not available when using react-query only.');
+      },
     }),
-    [recipe],
+    [currentRecipe],
   );
 
   return (
     <>
       <ErrorDialog
         open={errorOpen}
-        onClose={() => setErrorOpen(!errorOpen)}
-        errorResponse={errorMessage}
+        onClose={() => setErrorOpen(false)}
+        errorResponse={undefined}
+        customErrorMessage={errorMessage}
       />
       <CurrentRecipeContext.Provider value={currentRecipeContextValue}>
         {children}
