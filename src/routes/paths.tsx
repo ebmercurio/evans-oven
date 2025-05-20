@@ -7,7 +7,7 @@ export const paths = {
   recipe: {
     root: path('/recipe'),
     recipe: (recipeId: string) => path(`/recipe/${recipeId}`),
-    tag: (tagId: string) => path(`/recipeTag/${tagId}`),
+    tagName: (tagName: string) => path(`/recipeTag/${tagName}`),
     admin: path('/admin'),
   },
 };

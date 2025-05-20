@@ -82,7 +82,7 @@ export default function HomeBottom() {
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      padding: '48px 16px',
+      py: 4,
     }}
     >
       <Container>

@@ -3,6 +3,7 @@ import {
   Box, Button, Container, Grid, Typography,
 } from '@mui/material';
 import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import {
   cursiveFont,
   secondary,
@@ -22,6 +23,13 @@ import ICategoryCard from '../../../interfaces/ICategoryCard';
 
 export default function HomeHero() {
   const router = useRouter();
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    // Delay to create the fade-in effect
+    const timer = setTimeout(() => setIsVisible(true), 100);
+    return () => clearTimeout(timer);
+  }, []);
 
   const { data: homeHeroItemsData, error: heroItemsError } = useQuery(['homeHeroItems'], async () => {
     const res = await getAllHomeHeroItems();
@@ -31,6 +39,7 @@ export default function HomeHero() {
     ['homeHeroSmallItems'],
     async () => {
       const res = await getAllHomeHeroSmallItems();
+      console.log('homeHeroSmallItemsData', res);
       return res;
     },
   );
@@ -45,8 +54,8 @@ export default function HomeHero() {
     );
   }
 
-  const handleCategoryClick = (tagId: string) => {
-    const linkTo = paths.recipe.tag(tagId);
+  const handleCategoryClick = (tagName: string) => {
+    const linkTo = paths.recipe.tagName(tagName);
     router.push(linkTo);
   };
 
@@ -64,9 +73,7 @@ export default function HomeHero() {
           data-testid="homeHero"
           sx={{
             borderRadius: '12px',
-            width: '100%',
             display: 'flex',
-            padding: '24px 0px',
           }}
           justifyContent="space-between"
           alignItems="center"
@@ -94,11 +101,18 @@ export default function HomeHero() {
                 fontWeight: 'bold',
                 textShadow: '1px 1px 4px rgba(0,0,0,0.15)',
                 textAlign: { xs: 'center', sm: 'right' }, // Center on small screens, right on larger
+                transition: 'opacity 1s ease-in',
+                opacity: isVisible ? 1 : 0,
               }}
             >
               Just recipes.
             </Typography>
           </Grid>
+          {/* <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center' }}>
+            <Button onClick={() => MigrateTagIdToName(true)}>
+              migrate
+            </Button>
+          </Grid> */}
         </Grid>
       </Container>
       <Box
@@ -111,11 +125,11 @@ export default function HomeHero() {
         <Container>
           <Grid container spacing={3}>
             {homeHeroItemsData?.map((categoryCard: ICategoryCard) => (
-              <Grid item key={categoryCard.tag.id} xs={12} sm={6} md={3}>
-                <LargeCategoryCard onClick={() => handleCategoryClick(categoryCard.tag.id)}>
+              <Grid item key={categoryCard.id} xs={12} sm={6} md={3}>
+                <LargeCategoryCard onClick={() => handleCategoryClick(categoryCard.tag)}>
                   <img
                     src={categoryCard.image}
-                    alt={categoryCard.tag.name}
+                    alt={categoryCard.tag}
                     style={{
                       position: 'absolute',
                       top: 0,
@@ -139,7 +153,7 @@ export default function HomeHero() {
                     }}
                   >
                     <Typography sx={{ color: 'white', fontFamily: straightFont, fontWeight: 'bold' }}>
-                      {categoryCard.tag.name}
+                      {categoryCard.tag}
                     </Typography>
                   </Box>
                 </LargeCategoryCard>
@@ -156,7 +170,7 @@ export default function HomeHero() {
           >
             {homeHeroSmallItemsData?.map((categoryCard: ICategoryCard) => (
               <Grid item xs={12} sm={2} key={categoryCard.id}>
-                <MediumCategoryCard onClick={() => handleCategoryClick(categoryCard.tag.id)}>
+                <MediumCategoryCard onClick={() => handleCategoryClick(categoryCard.tag)}>
                   <Box
                     sx={{
                       width: '100%',
@@ -166,7 +180,7 @@ export default function HomeHero() {
                   >
                     <img
                       src={categoryCard.image}
-                      alt={categoryCard.tag.name}
+                      alt={categoryCard.tag}
                       style={{
                         width: '100%',
                         height: '100%',
@@ -188,7 +202,7 @@ export default function HomeHero() {
                       }}
                     >
                       <Typography sx={{ color: 'white', fontFamily: straightFont, fontWeight: 'bold' }}>
-                        {categoryCard.tag.name}
+                        {categoryCard.tag}
                       </Typography>
                     </Box>
                   </Box>

@@ -8,8 +8,7 @@ import { FavoriteBorder, Favorite } from '@mui/icons-material';
 import { useEffect, useState } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
 import IRecipe from '../../interfaces/IRecipe';
-import { getTagById, updateUserFavorites } from '../../services/DbService';
-import ITag from '../../interfaces/ITag';
+import { updateUserFavorites } from '../../services/DbService';
 import { useAuth } from '../../contexts/AuthContext';
 import { useModal } from '../../providers/ModalProvider';
 import {
@@ -25,12 +24,13 @@ interface RecipeCardProps {
 
 export default function RecipeCard(props: RecipeCardProps) {
   const { recipe } = props;
-  const [recipeTags, setRecipeTags] = useState<ITag[]>([]);
+  // const [recipeTags, setRecipeTags] = useState<ITag[]>([]);
   const { currentUser, setCurrentUser } = useAuth();
   const { setShowLoginModal, setTriggerFavMessage } = useModal();
   const [isFavorited, setIsFavorited] = useState<boolean>(false);
   const [triggerEmailVerifyMessage, setTriggerEmailVerifyMessage] = useState(false);
 
+  console.log(recipe, 'recipe');
   const handleFavoriteClick = async () => {
     if (currentUser && auth.currentUser?.emailVerified) {
       await updateUserFavorites(currentUser, recipe.id);
@@ -55,13 +55,13 @@ export default function RecipeCard(props: RecipeCardProps) {
   };
 
   useEffect(() => {
-    const fetchTags = async () => {
-      const tagsPromises = recipe.tags.map((tag) => getTagById(tag));
-      const tags = await Promise.all(tagsPromises);
-      setRecipeTags(tags);
-    };
+    // const fetchTags = async () => {
+    //   const tagsPromises = recipe.tags.map((tag) => getTagById(tag));
+    //   const tags = await Promise.all(tagsPromises);
+    //   setRecipeTags(tags);
+    // };
 
-    fetchTags();
+    // fetchTags();
 
     if (currentUser && auth.currentUser?.emailVerified) {
       setIsFavorited(currentUser.favorites.includes(recipe.id));
@@ -149,10 +149,10 @@ export default function RecipeCard(props: RecipeCardProps) {
               mb: 1,
             }}
           >
-            {recipeTags.map((tag) => (
+            {recipe.tags.map((tag) => (
               <Chip
-                key={tag.id}
-                label={tag.name}
+                key={tag}
+                label={tag}
                 sx={{
                   backgroundColor: primary,
                   color: white,

@@ -7,7 +7,6 @@ import {
   Grid,
   Typography,
 } from '@mui/material';
-import { useEffect, useState } from 'react';
 import {
   getAllRecipes, getAllTags, getMealTypeCategories,
   getPopularCategories,
@@ -23,15 +22,10 @@ import ICategoryCard from '../../../interfaces/ICategoryCard';
 import useRouter from '../../../hooks/use-router';
 import { paths } from '../../../routes/paths';
 import MediumCategoryCard from '../../../components/CategoryCard/MediumCategoryCard';
-import { useAuth } from '../../../contexts/AuthContext';
 import ITag from '../../../interfaces/ITag';
 
 export default function RecipesMain() {
-  const [topRecipes, setTopRecipes] = useState<IRecipe[]>([]);
-  const [popularCats, setPopularCats] = useState<ICategoryCard[]>([]);
-  const [mealTypeCats, setMealTypeCats] = useState<ICategoryCard[]>([]);
   const router = useRouter();
-  const { currentUser } = useAuth();
 
   const { data: allRecipesData, error: allRecipesError } = useQuery(
     ['allRecipes'],
@@ -41,6 +35,8 @@ export default function RecipesMain() {
     },
   );
 
+  const topRecipesData = allRecipesData?.slice(0, 6) ?? [];
+
   const { data: allTagsData, error: allTagsError } = useQuery(
     ['allTags'],
     async () => {
@@ -49,24 +45,40 @@ export default function RecipesMain() {
     },
   );
 
-  const handleCategoryClick = (tagId: string) => {
-    const linkTo = paths.recipe.tag(tagId);
+  const { data: mealTypeCategories } = useQuery(
+    ['mealTypeCategories'],
+    async () => {
+      const res = await getMealTypeCategories();
+      return res;
+    },
+  );
+
+  const { data: popularCategories } = useQuery(
+    ['popularCategories'],
+    async () => {
+      const res = await getPopularCategories();
+      return res;
+    },
+  );
+
+  const handleCategoryClick = (tagName: string) => {
+    const linkTo = paths.recipe.tagName(tagName);
     router.push(linkTo);
   };
 
-  useEffect(() => {
-    const fetchFeaturedRecipes = async () => {
-      const topRecipesData = allRecipesData?.slice(0, 6) ?? [];
-      const mealTypeCategories = await getMealTypeCategories();
-      const popularCategories = await getPopularCategories();
+  // useEffect(() => {
+  //   const fetchFeaturedRecipes = async () => {
+  //     const topRecipesData = allRecipesData?.slice(0, 6) ?? [];
+  //     // const mealTypeCategories = await getMealTypeCategories();
+  //     // const popularCategories = await getPopularCategories();
 
-      setMealTypeCats(mealTypeCategories);
-      setPopularCats(popularCategories);
-      setTopRecipes(topRecipesData);
-    };
+  //     // setMealTypeCats(mealTypeCategories);
+  //     // setPopularCats(popularCategories);
+  //     setTopRecipes(topRecipesData);
+  //   };
 
-    fetchFeaturedRecipes();
-  }, [currentUser]);
+  //   fetchFeaturedRecipes();
+  // }, [currentUser]);
 
   if (allRecipesError) {
     return (
@@ -88,6 +100,8 @@ export default function RecipesMain() {
     );
   }
 
+  console.log('allRecipesData', allRecipesData);
+
   return (
     <Grid container>
       <Grid
@@ -108,7 +122,7 @@ export default function RecipesMain() {
       <Grid item xs={12}>
         <Divider sx={{ my: 2 }} />
       </Grid>
-      {topRecipes.map((recipe: IRecipe) => (
+      {topRecipesData.map((recipe: IRecipe) => (
         <Grid
           item
           key={recipe.id}
@@ -129,12 +143,12 @@ export default function RecipesMain() {
         <Divider sx={{ my: 2 }} />
       </Grid>
       <Grid container spacing={3}>
-        {popularCats.map((categoryCard: ICategoryCard) => (
-          <Grid item key={categoryCard.tag.id} xs={12} sm={6} md={3}>
-            <MediumCategoryCard onClick={() => handleCategoryClick(categoryCard.tag.id)}>
+        {popularCategories?.map((categoryCard: ICategoryCard) => (
+          <Grid item key={categoryCard.id} xs={12} sm={6} md={3}>
+            <MediumCategoryCard onClick={() => handleCategoryClick(categoryCard.tag)}>
               <img
                 src={categoryCard.image}
-                alt={categoryCard.tag.name}
+                alt={categoryCard.tag}
                 style={{
                   position: 'absolute',
                   top: 0,
@@ -159,7 +173,7 @@ export default function RecipesMain() {
                 }}
               >
                 <Typography sx={{ color: 'white', fontFamily: straightFont, fontWeight: 'bold' }}>
-                  {categoryCard.tag.name}
+                  {categoryCard.tag}
                 </Typography>
               </Box>
             </MediumCategoryCard>
@@ -182,12 +196,12 @@ export default function RecipesMain() {
           justifyContent: 'center',
         }}
       >
-        {mealTypeCats.map((categoryCard: ICategoryCard) => (
-          <Grid item key={categoryCard.tag.id} xs={12} sm={6} md={3}>
-            <MediumCategoryCard onClick={() => handleCategoryClick(categoryCard.tag.id)}>
+        {mealTypeCategories?.map((categoryCard: ICategoryCard) => (
+          <Grid item key={categoryCard.id} xs={12} sm={6} md={3}>
+            <MediumCategoryCard onClick={() => handleCategoryClick(categoryCard.tag)}>
               <img
                 src={categoryCard.image}
-                alt={categoryCard.tag.name}
+                alt={categoryCard.tag}
                 style={{
                   position: 'absolute',
                   top: 0,
@@ -212,7 +226,7 @@ export default function RecipesMain() {
                 }}
               >
                 <Typography sx={{ color: 'white', fontFamily: straightFont, fontWeight: 'bold' }}>
-                  {categoryCard.tag.name}
+                  {categoryCard.tag}
                 </Typography>
               </Box>
             </MediumCategoryCard>
@@ -226,8 +240,10 @@ export default function RecipesMain() {
         <Divider sx={{ my: 2 }} />
       </Grid>
       <Grid container justifyContent="center" spacing={3}>
-        {allTagsData?.filter((tag: ITag) => !popularCats.map((cat) => cat.tag.id).includes(tag.id))
-          .filter((tag: ITag) => !mealTypeCats.map((cat) => cat.tag.id).includes(tag.id))
+        {allTagsData?.filter((tag: ITag) => !popularCategories?.map(
+          (cat) => cat.tag,
+        ).includes(tag.name))
+          .filter((tag: ITag) => !mealTypeCategories?.map((cat) => cat.tag).includes(tag.name))
 
           .sort((a, b) => a.name.localeCompare(b.name)) // Sorts the tags alphabetically by name
           .map((tag: ITag) => (

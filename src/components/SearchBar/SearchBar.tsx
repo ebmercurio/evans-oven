@@ -3,10 +3,9 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
-import {
-  blackText, primary, warmGold, whiteBackground,
-} from '../../Constants';
+import { warmerGold, warmGold } from '../../Constants';
 import SearchBox from '../SearchBox';
+import './SearchBar.css';
 
 export default function SearchBar() {
   const [search, setSearch] = useState<boolean>(false);
@@ -19,11 +18,13 @@ export default function SearchBar() {
         width: { xs: '98vw', sm: '500px' },
         left: { xs: 0, sm: 'auto' },
         right: { xs: 0, sm: 'auto' },
-        backgroundColor: whiteBackground,
+        backgroundColor: '#f8f6f2', // or a slightly warmed version of your cream background
         zIndex: 1300,
         display: { xs: 'flex' },
         justifyContent: 'center',
+        boxShadow: '0px -2px 8px rgba(0,0,0,0.05)',
       }}
+      className="pulsingSearch searchAnimate"
     >
       <IconButton onClick={() => setSearch(true)}>
         <TextField
@@ -34,26 +35,26 @@ export default function SearchBar() {
           sx={{
             '& .MuiOutlinedInput-root': {
               '& fieldset': {
-                borderColor: primary, // Default border color
+                borderColor: warmGold, // Default border color
               },
               '&:hover fieldset': {
-                borderColor: warmGold, // Hover state
+                borderColor: warmerGold, // Hover state
               },
               '&.Mui-focused fieldset': {
-                borderColor: warmGold,
+                borderColor: warmerGold,
                 boxShadow: '0px 2px 6px rgba(227, 183, 120, 0.3)', // Soft glow
 
               },
             },
             '& .MuiInputLabel-root': {
-              color: blackText, // Default label color
+              color: warmGold, // Default label color
             },
             '& .MuiInputLabel-root.Mui-focused': {
-              color: primary, // Changes floating label color on focus
+              color: warmGold, // Changes floating label color on focus
             },
           }}
           InputProps={{
-            startAdornment: <InputAdornment position="start"><SearchIcon /></InputAdornment>,
+            startAdornment: <InputAdornment position="start"><SearchIcon sx={{ color: warmGold }} /></InputAdornment>,
           }}
         />
       </IconButton>
