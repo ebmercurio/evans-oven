@@ -35,7 +35,6 @@ export default function HomeBottom() {
     ['recipesByTag', tags[selectedTagIndex]?.id],
     async () => {
       if (tagsData) {
-        console.log(tags, 'tags')
         const res = await getRecipesByTag(tags[selectedTagIndex].id);
         return res;
       }
