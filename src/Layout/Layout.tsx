@@ -12,13 +12,9 @@ function Layout(props: LayoutProps) {
   return (
     <>
       <TopNavigation />
-      <div
-        id="spacer"
-        style={{
-          height: '100px',
-        }}
-      />
-      {children}
+      <div style={{ marginTop: '90px' }}>
+        {children}
+      </div>
       <Footer />
     </>
   );

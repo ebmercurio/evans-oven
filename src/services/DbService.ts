@@ -111,7 +111,6 @@ export async function getAllHomeHeroItems(): Promise<ICategoryCard[]> {
       image: documentData.image,
     };
 
-    console.log(categoryCard.tag, 'categoryCard.tag');
     return categoryCard;
   }));
 

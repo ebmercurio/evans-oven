@@ -14,6 +14,7 @@ export const cardBackground = '#FAF3E0';
 export const loadingBackdropColor = '#fff';
 export const whiteBackground = '#F8F5EC'; // Off-white
 export const blackText = '#2F2F2F'; // Dark Gray
+export const espressoBrown = '#5B4A32';
 export const searchText = '#5F5B52';
 export const featureItemText = '#777';
 export const straightFont = 'Montserrat, sans-serif';

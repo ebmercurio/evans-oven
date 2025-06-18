@@ -13,7 +13,7 @@ export default function SimpleBottomNavigation() {
       <Container>
         <Grid container spacing={2} justifyContent="space-between" alignItems="center">
           <Grid item>
-            <TopNavLogo />
+            <TopNavLogo size="large" />
           </Grid>
           <Grid item>
             <Typography sx={{ m: 2, color: 'white', fontSize: '0.9rem' }}>

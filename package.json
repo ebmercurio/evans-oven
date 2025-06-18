@@ -27,7 +27,7 @@
     "eslint-config-airbnb-typescript": "^17.1.0",
     "firebase": "^10.4.0",
     "firebaseui": "^6.1.0",
-    "framer-motion": "^10.13.0",
+    "framer-motion": "^10.18.0",
     "latest-version": "^7.0.0",
     "nth-check": "^2.1.1",
     "numeral": "^2.0.6",
@@ -52,7 +52,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "lint": "eslint --fix --ext .ts,.tsx ."
   },
   "eslintConfig": {
     "extends": [
@@ -74,10 +75,14 @@
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@eslint/js": "^9.28.0",
     "@types/numeral": "^2.0.5",
     "@types/react-lazy-load-image-component": "^1.6.3",
     "@types/styled-components": "^5.1.26",
-    "eslint": "^8.45.0",
-    "react-scripts": "5.0.1"
+    "eslint": "^8.57.1",
+    "eslint-plugin-react": "^7.37.5",
+    "globals": "^16.2.0",
+    "react-scripts": "5.0.1",
+    "typescript-eslint": "^8.33.1"
   }
 }

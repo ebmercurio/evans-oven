@@ -1,8 +1,13 @@
 import logo from '../../assets/evansOven.png';
 
-function TopNavLogo() {
+type TopNavLogoProps = {
+  size: string;
+};
+function TopNavLogo(props: TopNavLogoProps) {
+  const { size } = props;
+
   return (
-    <img src={logo} alt="Site Logo" width="100px" height="100px" />
+    <img src={logo} alt="Site Logo" width={size === 'small' ? '50px' : '75px'} height={size === 'small' ? '50px' : '75px'} />
   );
 }
 

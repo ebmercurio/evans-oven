@@ -47,9 +47,9 @@ export default function RecipesByTag() {
   const featuredRecipe = recipesByTag?.[0];
 
   const renderRecipeSection = (recipes: IRecipe[], index: number, section: string) => (
-    <Grid container spacing={2}>
+    <Grid container spacing={2} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
       {recipes.slice(0, index + batchSize).map((recipe) => (
-        <Grid item xs={12} sm={6} md={4} key={recipe.id}>
+        <Grid item xs={12} sm={6} md={4} key={recipe.id} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <RecipeCard recipe={recipe} />
         </Grid>
       ))}

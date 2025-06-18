@@ -5,6 +5,7 @@ import {
   Chip,
   Divider,
   Grid,
+  Hidden,
   Typography,
 } from '@mui/material';
 import {
@@ -102,18 +103,20 @@ export default function RecipesMain() {
 
   return (
     <Grid container>
-      <Grid
-        item
-        xs={12}
-        sx={{
-          display: 'flex',
-          borderRadius: '8px',
-          padding: '10px',
-          boxShadow: 'inset 0 2px 4px rgba(0, 0, 0, 0.05)',
-        }}
-      >
-        <SearchBar />
-      </Grid>
+      <Hidden smDown>
+        <Grid
+          item
+          xs={12}
+          sx={{
+            display: 'flex',
+            borderRadius: '8px',
+            padding: '10px',
+            boxShadow: 'inset 0 2px 4px rgba(0, 0, 0, 0.05)',
+          }}
+        >
+          <SearchBar />
+        </Grid>
+      </Hidden>
       <Grid item xs={12}>
         <Typography variant="h4" fontFamily="Caveat" sx={{ color: primary }}>What&apos;s Trending</Typography>
       </Grid>

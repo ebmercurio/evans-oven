@@ -1,6 +1,6 @@
 import {
   Card, CardMedia, CardContent, Typography, IconButton,
-  Box, Chip, Link,
+  Box, Chip,
   Alert,
   Snackbar,
 } from '@mui/material';
@@ -17,6 +17,7 @@ import {
   white,
 } from '../../Constants';
 import { auth } from '../../firebase';
+import useRouter from '../../hooks/use-router';
 
 interface RecipeCardProps {
   recipe: IRecipe;
@@ -25,6 +26,7 @@ interface RecipeCardProps {
 export default function RecipeCard(props: RecipeCardProps) {
   const { recipe } = props;
   // const [recipeTags, setRecipeTags] = useState<ITag[]>([]);
+  const router = useRouter();
   const { currentUser, setCurrentUser } = useAuth();
   const { setShowLoginModal, setTriggerFavMessage } = useModal();
   const [isFavorited, setIsFavorited] = useState<boolean>(false);
@@ -53,6 +55,10 @@ export default function RecipeCard(props: RecipeCardProps) {
     }
   };
 
+  const handleCardClick = () => {
+    router.push(`/recipe/${recipe.id}`);
+  };
+
   useEffect(() => {
     // const fetchTags = async () => {
     //   const tagsPromises = recipe.tags.map((tag) => getTagById(tag));
@@ -68,123 +74,115 @@ export default function RecipeCard(props: RecipeCardProps) {
   }, []);
 
   return (
-    <Link
-      href={`/recipe/${recipe.id}`}
-      underline="none"
+    <Card
+      onClick={handleCardClick}
       sx={{
-        textDecoration: 'none',
-        '&:hover': { textDecoration: 'none' },
+        maxWidth: 360,
+        borderRadius: '16px',
+        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+        transition: 'transform 0.2s',
+        '&:hover': { transform: 'scale(1.05)' },
+        height: '100%',
+        display: 'flex',
+        backgroundColor: cardBackground,
+        flexDirection: 'column',
+        justifyContent: 'space-between',
       }}
     >
-      <Card
+      <CardMedia
+        component="img"
+        height="200"
+        image={recipe.image}
+        alt={recipe.title}
         sx={{
-          maxWidth: 360,
-          borderRadius: '16px',
-          boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-          transition: 'transform 0.2s',
-          '&:hover': { transform: 'scale(1.05)' },
-          height: '100%',
+          borderTopLeftRadius: '16px',
+          borderTopRightRadius: '16px',
+        }}
+      />
+      <CardContent
+        sx={{
           display: 'flex',
-          backgroundColor: cardBackground,
           flexDirection: 'column',
           justifyContent: 'space-between',
+          flexGrow: 1,
         }}
       >
-        <CardMedia
-          component="img"
-          height="200"
-          image={recipe.image}
-          alt={recipe.title}
-          sx={{
-            borderTopLeftRadius: '16px',
-            borderTopRightRadius: '16px',
-          }}
-        />
-        <CardContent
+        <Box
           sx={{
             display: 'flex',
-            flexDirection: 'column',
             justifyContent: 'space-between',
-            flexGrow: 1,
+            alignItems: 'center',
+            mb: 1,
           }}
         >
-          <Box
+          <Typography
+            gutterBottom
+            component="div"
             sx={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              mb: 1,
+              fontSize: '18px',
+              fontFamily: 'Montserrat',
+              fontWeight: 500,
+              marginBottom: '8px',
             }}
           >
-            <Typography
-              gutterBottom
-              component="div"
-              sx={{
-                fontSize: '18px',
-                fontFamily: 'Montserrat',
-                fontWeight: 500,
-                marginBottom: '8px',
-              }}
-            >
-              {recipe.title}
-            </Typography>
-            <IconButton
-              onClick={(e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                handleFavoriteClick();
-              }}
-              sx={{ color: isFavorited ? favoritedColor : unfavoritedColor }}
-            >
-              {isFavorited ? <Favorite /> : <FavoriteBorder />}
-            </IconButton>
-          </Box>
-          <Box
-            sx={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              justifyContent: 'center',
-              gap: 0.5,
-              mb: 1,
-            }}
-          >
-            {recipe.tags.map((tag) => (
-              <Chip
-                key={tag}
-                label={tag}
-                sx={{
-                  backgroundColor: primary,
-                  color: white,
-                  fontWeight: 'bold',
-                  maxWidth: '100%', // Ensure tags don't overflow
-                }}
-              />
-            ))}
-          </Box>
-        </CardContent>
-      </Card>
-      {triggerEmailVerifyMessage && (
-      <Snackbar
-        open={triggerEmailVerifyMessage}
-        autoHideDuration={3000}
-        onClose={() => setTriggerEmailVerifyMessage(false)}
-        action={(
+            {recipe.title}
+          </Typography>
           <IconButton
-            size="small"
-            aria-label="close"
-            color="inherit"
-            onClick={() => setTriggerEmailVerifyMessage(false)}
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              handleFavoriteClick();
+            }}
+            sx={{ color: isFavorited ? favoritedColor : unfavoritedColor }}
           >
-            <CloseIcon />
+            {isFavorited ? <Favorite /> : <FavoriteBorder />}
           </IconButton>
-                      )}
-      >
-        <Alert onClose={() => setTriggerEmailVerifyMessage(false)} severity="error">
-          You must verify your email before favoriting/commenting
-        </Alert>
-      </Snackbar>
+        </Box>
+        <Box
+          sx={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+            gap: 0.5,
+            mb: 1,
+          }}
+        >
+          {recipe.tags.map((tag) => (
+            <Chip
+              key={tag}
+              label={tag}
+              sx={{
+                backgroundColor: primary,
+                color: white,
+                fontWeight: 'bold',
+                maxWidth: '100%', // Ensure tags don't overflow
+              }}
+            />
+          ))}
+        </Box>
+      </CardContent>
+      {triggerEmailVerifyMessage && (
+        <Snackbar
+          open={triggerEmailVerifyMessage}
+          autoHideDuration={3000}
+          onClose={() => setTriggerEmailVerifyMessage(false)}
+          action={(
+            <IconButton
+              size="small"
+              aria-label="close"
+              color="inherit"
+              onClick={() => setTriggerEmailVerifyMessage(false)}
+            >
+              <CloseIcon />
+            </IconButton>
+          )}
+        >
+          <Alert onClose={() => setTriggerEmailVerifyMessage(false)} severity="error">
+            You must verify your email before favoriting/commenting
+          </Alert>
+        </Snackbar>
       )}
-    </Link>
+    </Card>
 
   );
 }
