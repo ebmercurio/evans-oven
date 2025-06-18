@@ -74,6 +74,7 @@ export default function AccountMenu() {
           height: 40,
           background: (theme) => alpha(theme.palette.grey[500], 0.08),
         }}
+
       >
         {currentUser ? (
           <Avatar
@@ -99,15 +100,15 @@ export default function AccountMenu() {
       >
         {currentUser && (
 
-        <Box sx={{ p: 2, pb: 1.5 }}>
-          <Typography variant="subtitle2" noWrap>
-            {currentUser.displayName}
-          </Typography>
+          <Box sx={{ p: 2, pb: 1.5 }}>
+            <Typography variant="subtitle2" noWrap>
+              {currentUser.displayName}
+            </Typography>
 
-          <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {currentUser.email}
-          </Typography>
-        </Box>
+            <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
+              {currentUser.email}
+            </Typography>
+          </Box>
         )}
 
         <Divider sx={{ borderStyle: 'dashed' }} />

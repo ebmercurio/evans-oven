@@ -40,6 +40,10 @@ export default function SearchBox(props: ISearchBoxProps) {
       const res = await getAllRecipes();
       return res;
     },
+    {
+      staleTime: 24 * 60 * 60 * 1000, // 24 hours
+      cacheTime: 24 * 60 * 60 * 1000, // 24 hours
+    },
   );
 
   if (error) {

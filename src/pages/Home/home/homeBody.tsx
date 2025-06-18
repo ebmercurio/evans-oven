@@ -76,17 +76,37 @@ export default function HomeBody() {
   };
 
   return (
-    <Box sx={{ py: 4, backgroundColor: whiteBackground }}>
+    <Box sx={{ py: 2, backgroundColor: whiteBackground }}>
       <Container>
         <StyledTabs value={tabIndex} onChange={handleTabChange} centered>
           <Tab label="Trending" />
           <Tab label="New Recipes" />
           <Tab label="Recommended" />
         </StyledTabs>
-
-        <Grid container spacing={4} sx={{ mt: 4 }}>
+        <Grid
+          container
+          spacing={4}
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            mt: 1,
+          }}
+        >
           {recipesToDisplay()?.map((recipe) => (
-            <Grid item xs={12} sm={6} md={4} key={recipe.id}>
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              md={4}
+              key={recipe.id}
+              sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                padding: 1,
+              }}
+            >
               <RecipeCard recipe={recipe} />
             </Grid>
           ))}
