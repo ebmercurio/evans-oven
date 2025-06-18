@@ -46,7 +46,6 @@ export default function SearchBar() {
   };
 
   if (error) {
-    console.error('Error fetching recipes:', error);
     return <div>Error loading recipes</div>;
   }
 
