@@ -12,10 +12,12 @@ import {
 import './SearchBar.css';
 import { getAllRecipes } from '../../services/DbService';
 import IRecipe from '../../interfaces/IRecipe';
+import useRouter from '../../hooks/use-router';
 
 export default function SearchBar() {
   const [isFocused, setIsFocused] = useState(false);
   const [inputValue, setInputValue] = useState('');
+  const router = useRouter();
 
   const { data: allRecipes, error } = useQuery(
     ['allRecipes'],
@@ -45,6 +47,15 @@ export default function SearchBar() {
     return baseFilter(options, { ...state }); // Spread the full state so TS is happy
   };
 
+  const handleSelect = (
+    event: React.SyntheticEvent,
+    value: string | IRecipe | null,
+  ) => {
+    if (value && typeof value !== 'string' && 'id' in value) {
+      router.push(`/recipe/${value.id}`);
+    }
+  };
+
   if (error) {
     return <div>Error loading recipes</div>;
   }
@@ -63,6 +74,7 @@ export default function SearchBar() {
         id="searchBar"
         disableClearable
         options={allRecipes}
+        onChange={handleSelect}
         filterOptions={filterOptions}
         renderOption={(props, option) => (
           <li
