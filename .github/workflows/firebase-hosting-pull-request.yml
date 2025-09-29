@@ -19,7 +19,7 @@ jobs:
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           # GITHUB_TOKEN is auto-provisioned; pass it so the action can create the check + PR comment
-          repoToken: ${{ github.token }}
+          # repoToken: ${{ github.token }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_EVANSOVEN }}
           projectId: evansoven
           # optional: expires: 30d
