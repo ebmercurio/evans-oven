@@ -2,6 +2,7 @@ import { useState } from 'react';
 import {
   Box, Container, Grid, Tabs, Tab, styled, Typography,
 } from '@mui/material';
+import { trackRecipeEvent } from '../../../services/analytics';
 import { searchText, secondary, whiteBackground } from '../../../Constants';
 import RecipeInstructions from './recipeInstructions'; // Contains instructions
 import RecipeComments from './recipeCommentsTab'; // Contains comments section
@@ -41,6 +42,8 @@ export default function RecipeDetails() {
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    const tabName = newValue === 0 ? 'instructions' : 'comments';
+    trackRecipeEvent('view_tab', tabName, '');
     setSelectedTabIndex(newValue);
   };
 

@@ -1,4 +1,6 @@
-import { Routes, Route, Navigate } from 'react-router';
+import { Routes, Route, Navigate, useLocation } from 'react-router';
+import { useEffect } from 'react';
+import { initGA, trackPageView } from './services/analytics';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ModalProvider } from './providers/ModalProvider'; // Adjust the path as necessary
 import Layout from './Layout';
@@ -15,6 +17,16 @@ import AdminPage from './pages/Admin';
 const queryClient = new QueryClient();
 
 function App() {
+  const location = useLocation();
+
+  useEffect(() => {
+    initGA();
+  }, []);
+
+  useEffect(() => {
+    trackPageView(location.pathname);
+  }, [location]);
+
   return (
     <AuthProvider>
       <QueryClientProvider client={queryClient}>

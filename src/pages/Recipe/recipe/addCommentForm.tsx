@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { useCallback, useState } from 'react';
+import { trackRecipeEvent } from '../../../services/analytics';
 import { useForm, Controller } from 'react-hook-form';
 import LoadingButton from '@mui/lab/LoadingButton';
 import {
@@ -104,6 +105,9 @@ export default function addCommentForm({
 
         setCurrentRecipe(updatedRecipe);
 
+        // Track successful comment submission
+        trackRecipeEvent('add_comment', currentRecipe.id, currentRecipe.title);
+
         reset();
         onClose();
       } catch (error: unknown) {
@@ -157,6 +161,9 @@ export default function addCommentForm({
                         value={Number(field.value)}
                         onChange={(event, newValue) => {
                           field.onChange(newValue);
+                          if (newValue) {
+                            trackRecipeEvent('rate_recipe', currentRecipe.id, `${newValue} stars`);
+                          }
                         }}
                         sx={{
                           fontSize: '2rem',
