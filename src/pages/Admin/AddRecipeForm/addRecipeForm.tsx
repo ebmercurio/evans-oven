@@ -156,11 +156,11 @@ export default function AddRecipeForm(
             Create Recipe
           </LoadingButton>
           {errorMessage && (
-          <Box sx={{ mt: 2 }}>
-            <Alert severity="error">
-              {errorMessage}
-            </Alert>
-          </Box>
+            <Box sx={{ mt: 2 }}>
+              <Alert severity="error">
+                {errorMessage}
+              </Alert>
+            </Box>
           )}
         </DialogActions>
       </FormProvider>

@@ -44,16 +44,7 @@ export default function SearchBar() {
   const filterOptions = (options: IRecipe[], state: FilterOptionsState<IRecipe>) => {
     const input = state.inputValue.trim();
     if (!input) return [];
-    return baseFilter(options, { ...state }); // Spread the full state so TS is happy
-  };
-
-  const handleSelect = (
-    event: React.SyntheticEvent,
-    value: string | IRecipe | null,
-  ) => {
-    if (value && typeof value !== 'string' && 'id' in value) {
-      router.push(`/recipe/${value.id}`);
-    }
+    return baseFilter(options, { ...state });
   };
 
   if (error) {
@@ -74,8 +65,21 @@ export default function SearchBar() {
         id="searchBar"
         disableClearable
         options={allRecipes}
-        onChange={handleSelect}
+        inputValue={inputValue}
+        onInputChange={(event, newInputValue) => {
+          setInputValue(newInputValue || '');
+        }}
+        onChange={(event, newValue) => {
+          if (newValue && typeof newValue === 'object' && 'id' in newValue) {
+            router.push(`/recipe/${newValue.id}`);
+            setInputValue('');
+          }
+        }}
         filterOptions={filterOptions}
+        getOptionLabel={(option) => {
+          if (typeof option === 'string') return option;
+          return option.title || '';
+        }}
         renderOption={(props, option) => (
           <li
             {...props}
@@ -87,7 +91,7 @@ export default function SearchBar() {
               transition: 'background-color 0.2s ease, transform 0.2s ease',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#f8f6f2'; // soft hover
+              e.currentTarget.style.backgroundColor = '#f8f6f2';
               e.currentTarget.style.transform = 'scale(1.02)';
             }}
             onMouseLeave={(e) => {
@@ -128,11 +132,11 @@ export default function SearchBar() {
               borderColor: darkGold,
             },
             '& .MuiInputLabel-root': {
-              color: espressoBrown, // Default label color
+              color: espressoBrown,
             },
           },
           '& .MuiInputLabel-root': {
-            color: espressoBrown, // Default label color
+            color: espressoBrown,
           },
         }}
         renderInput={(params) => (
@@ -155,17 +159,17 @@ export default function SearchBar() {
                 },
                 '&.Mui-focused fieldset': {
                   borderColor: darkGold,
-                  color: espressoBrown, // Focused label color
+                  color: espressoBrown,
                 },
                 '& .MuiInputLabel-root': {
-                  color: espressoBrown, // Default label color
+                  color: espressoBrown,
                 },
               },
               '& .MuiInputLabel-root': {
-                color: espressoBrown, // Default label color
+                color: espressoBrown,
               },
               '& label.Mui-focused': {
-                color: espressoBrown, // Focused label color
+                color: espressoBrown,
               },
             }}
             InputProps={{
@@ -181,7 +185,7 @@ export default function SearchBar() {
               shrink: isFocused || inputValue !== '',
               sx: {
                 color: espressoBrown,
-                marginLeft: isFocused ? 0 : '36px', // enough to clear the search icon space
+                marginLeft: isFocused ? 0 : '36px',
               },
             }}
           />

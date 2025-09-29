@@ -155,11 +155,11 @@ export default function CreateIngredientParts(props: CreateIngredientPartsProps)
             </Button>
           </Grid>
           {error && (
-          <Box sx={{ mt: 2 }}>
-            <Alert severity="error">
-              {error}
-            </Alert>
-          </Box>
+            <Box sx={{ mt: 2 }}>
+              <Alert severity="error">
+                {error}
+              </Alert>
+            </Box>
           )}
         </Grid>
       </AccordionDetails>

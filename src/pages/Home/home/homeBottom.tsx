@@ -1,11 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   Box, Container, Grid, Tabs, Tab, styled,
   Typography,
 } from '@mui/material';
-import { getAllTags, getRecipesByTag } from '../../../services/DbService';
-import ITag from '../../../interfaces/ITag';
+import { getAllRecipes, getAllTags } from '../../../services/DbService';
 import RecipeCard from '../../../components/RecipeCards/recipeCard';
 import { blackText, secondary, whiteBackground } from '../../../Constants';
 
@@ -28,52 +27,133 @@ const StyledTabs = styled(Tabs)({
 });
 
 export default function HomeBottom() {
-  const [tags, setTags] = useState<ITag[]>([]);
   const [selectedTagIndex, setSelectedTagIndex] = useState(0);
-  const { data: tagsData, error: tagsError } = useQuery(['tags'], getAllTags);
-  const { data: recipesByTagData, error: recipesByTagError } = useQuery(
-    ['recipesByTag', tags[selectedTagIndex]?.id],
-    async () => {
-      if (tagsData) {
-        const res = await getRecipesByTag(tags[selectedTagIndex].id);
-        return res;
-      }
-      return [];
-    },
-  );
+  const { 
+    data: tagsData, 
+    error: tagsError,
+    isLoading: isTagsLoading 
+  } = useQuery(['tags'], getAllTags);
+
+  const { 
+    data: recipesData, 
+    error: recipesError,
+    isLoading: isRecipesLoading 
+  } = useQuery(['recipes'], getAllRecipes);
+
+  // Return early if no data available yet
+  if (!tagsData || !recipesData) {
+    if (isTagsLoading || isRecipesLoading) {
+      return (
+        <Box sx={{ py: 4, textAlign: 'center' }}>
+          <Typography>Loading recipes and tags...</Typography>
+        </Box>
+      );
+    }
+
+    return (
+      <Box sx={{ py: 4, textAlign: 'center' }}>
+        <Typography>No data available</Typography>
+      </Box>
+    );
+  }
 
   if (tagsError) {
+    console.error('Tags Error:', tagsError); // Debug log
     return (
-      <Box>
-        <Typography>
+      <Box sx={{ p: 3 }}>
+        <Typography color="error">
           Error loading tags
         </Typography>
       </Box>
     );
   }
 
-  if (recipesByTagError) {
+  if (recipesError) {
+    console.error('Recipes Error:', recipesError); // Debug log
     return (
-      <Box>
-        <Typography>
-          Error loading recipes by tag
+      <Box sx={{ p: 3 }}>
+        <Typography color="error">
+          Error loading recipes
         </Typography>
       </Box>
     );
   }
 
-  useEffect(() => {
-    if (tagsData) {
-      const randomTags = tagsData.sort(
-        () => 0.5 - Math.random(),
-      ).slice(0, 5); // Randomly pick 5 tags
-      setTags(randomTags);
-    }
-  }, [tagsData]);
+  // Get tags with their recipe counts
+  const tagCounts = tagsData.map(tag => ({
+    ...tag,
+    recipeCount: recipesData.filter(recipe => recipe.tags.includes(tag.name)).length
+  }));
+
+  // Get seasonal tags (example seasonal mapping)
+  const currentMonth = new Date().getMonth();
+  const seasonalTags = {
+    0: ['winter', 'soup', 'comfort food'], // January
+    1: ['valentine', 'chocolate', 'romantic'], // February
+    2: ['spring', 'fresh', 'light'], // March
+    3: ['easter', 'spring', 'brunch'], // April
+    4: ['spring', 'mothers day', 'picnic'], // May
+    5: ['summer', 'bbq', 'grill'], // June
+    6: ['summer', 'ice cream', 'no bake'], // July
+    7: ['summer', 'fresh', 'quick'], // August
+    8: ['fall', 'back to school', 'lunch'], // September
+    9: ['fall', 'halloween', 'pumpkin'], // October
+    10: ['thanksgiving', 'fall', 'comfort food'], // November
+    11: ['christmas', 'holiday', 'winter'], // December
+  }[currentMonth] || [];
+
+  // Filter tags with recipes and sort by priority
+  const availableTags = tagCounts
+    .filter(tag => tag.recipeCount > 0)
+    .sort((a, b) => {
+      // Give priority to seasonal tags
+      const aIsSeasonal = seasonalTags.some(seasonal => 
+        a.name.toLowerCase().includes(seasonal.toLowerCase()));
+      const bIsSeasonal = seasonalTags.some(seasonal => 
+        b.name.toLowerCase().includes(seasonal.toLowerCase()));
+      
+      if (aIsSeasonal && !bIsSeasonal) return -1;
+      if (!aIsSeasonal && bIsSeasonal) return 1;
+      
+      // Then sort by recipe count
+      return b.recipeCount - a.recipeCount;
+    });
+
+  // Take top 5 tags
+  const popularTags = availableTags.slice(0, 5);
+
+  // If no tags with recipes, show message
+  if (!popularTags.length) {
+    return (
+      <Box sx={{ py: 4, textAlign: 'center' }}>
+        <Typography>No tags available with recipes</Typography>
+      </Box>
+    );
+  }
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setSelectedTagIndex(newValue);
   };
+
+  // Get recipes for the selected tag
+  const selectedTag = popularTags[selectedTagIndex];
+
+  const filteredRecipes = recipesData
+    .filter(recipe => recipe.tags.includes(selectedTag.name));
+  
+  // Randomly select up to 8 recipes to display
+  const displayRecipes = [...filteredRecipes]
+    .sort(() => 0.5 - Math.random())
+    .slice(0, 8);
+
+  // If no recipes for the selected tag, show empty message
+  if (!displayRecipes.length) {
+    return (
+      <Box sx={{ py: 4, textAlign: 'center' }}>
+        <Typography>No recipes available for selected tag</Typography>
+      </Box>
+    );
+  }
 
   return (
     <Box sx={{
@@ -87,16 +167,14 @@ export default function HomeBottom() {
     >
       <Container>
         <StyledTabs value={selectedTagIndex} onChange={handleTabChange}>
-          {tags.map((tag) => (
+          {popularTags.map((tag) => (
             <Tab key={tag.id} label={tag.name} />
           ))}
         </StyledTabs>
         <Grid container spacing={3} sx={{ marginTop: '24px' }}>
-          {recipesByTagData?.map((recipe) => (
+          {displayRecipes.map((recipe) => (
             <Grid item key={recipe.id} xs={12} sm={6} md={4} lg={3}>
-              <RecipeCard
-                recipe={recipe}
-              />
+              <RecipeCard recipe={recipe} />
             </Grid>
           ))}
         </Grid>

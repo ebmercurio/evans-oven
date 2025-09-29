@@ -212,55 +212,55 @@ export default function SearchBox(props: ISearchBoxProps) {
 
           {/* 🔹 "Top Results" Section */}
           {searchQuery.length > 0 && searchResults.length > 0 && (
-          <>
-            <Grid item xs={12}>
-              <Typography
-                variant="h5"
-                fontFamily={straightFont}
-                sx={{
-                  color: primary,
-                  fontWeight: '600',
-                  mt: 2, // Add space below search bar
-                }}
-              >
-                Top Results
-              </Typography>
-            </Grid>
-
-            {/* 🔹 Recipe Cards with Better Spacing */}
-            <Grid container spacing={1} sx={{ mt: 1, margin: '-4px' }}>
-              {searchResults.slice(0, resultsToShow).map((recipe: IRecipe) => (
-                <Grid item xs={6} sm={4} md={3} key={recipe.id}>
-                  <RecipeMiniCard
-                    recipe={recipe}
-                    setShowSearch={handleShowSearch}
-                  />
-                </Grid>
-              ))}
-              {resultsToShow < searchResults.length && (
-              <Grid item xs={12} display="flex" justifyContent="center" alignItems="center">
-                <Button
-                  variant="contained"
-                  onClick={loadMoreResults}
+            <>
+              <Grid item xs={12}>
+                <Typography
+                  variant="h5"
+                  fontFamily={straightFont}
                   sx={{
-                    backgroundColor: warmGold,
-                    '&:hover': {
-                      backgroundColor: darkGold, // Darker gold on hover
-                      transform: 'scale(1.03)', // Slight pop effect
-                      boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.15)', // Soft shadow
-                    },
+                    color: primary,
+                    fontWeight: '600',
+                    mt: 2, // Add space below search bar
                   }}
                 >
-                  Load More
-                </Button>
+                Top Results
+                </Typography>
               </Grid>
-              )}
-            </Grid>
 
-            <Grid item xs={12}>
-              <Divider sx={{ my: 2 }} />
-            </Grid>
-          </>
+              {/* 🔹 Recipe Cards with Better Spacing */}
+              <Grid container spacing={1} sx={{ mt: 1, margin: '-4px' }}>
+                {searchResults.slice(0, resultsToShow).map((recipe: IRecipe) => (
+                  <Grid item xs={6} sm={4} md={3} key={recipe.id}>
+                    <RecipeMiniCard
+                      recipe={recipe}
+                      setShowSearch={handleShowSearch}
+                    />
+                  </Grid>
+                ))}
+                {resultsToShow < searchResults.length && (
+                  <Grid item xs={12} display="flex" justifyContent="center" alignItems="center">
+                    <Button
+                      variant="contained"
+                      onClick={loadMoreResults}
+                      sx={{
+                        backgroundColor: warmGold,
+                        '&:hover': {
+                          backgroundColor: darkGold, // Darker gold on hover
+                          transform: 'scale(1.03)', // Slight pop effect
+                          boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.15)', // Soft shadow
+                        },
+                      }}
+                    >
+                  Load More
+                    </Button>
+                  </Grid>
+                )}
+              </Grid>
+
+              <Grid item xs={12}>
+                <Divider sx={{ my: 2 }} />
+              </Grid>
+            </>
           )}
 
           {/* 🔹 "Latest" Section */}
@@ -290,22 +290,22 @@ export default function SearchBox(props: ISearchBoxProps) {
             ))}
             <Grid item xs={12} justifyContent="center" alignItems="center">
               {latestResultsToShow < latestRecipes.length && (
-              <Box sx={{ textAlign: 'center', mt: 2 }}>
-                <Button
-                  variant="contained"
-                  onClick={loadMoreLatestResults}
-                  sx={{
-                    backgroundColor: warmGold,
-                    '&:hover': {
-                      backgroundColor: '#C28A45', // Darker gold on hover
-                      transform: 'scale(1.03)', // Slight pop effect
-                      boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.15)', // Soft shadow
-                    },
-                  }}
-                >
+                <Box sx={{ textAlign: 'center', mt: 2 }}>
+                  <Button
+                    variant="contained"
+                    onClick={loadMoreLatestResults}
+                    sx={{
+                      backgroundColor: warmGold,
+                      '&:hover': {
+                        backgroundColor: '#C28A45', // Darker gold on hover
+                        transform: 'scale(1.03)', // Slight pop effect
+                        boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.15)', // Soft shadow
+                      },
+                    }}
+                  >
                   Load More
-                </Button>
-              </Box>
+                  </Button>
+                </Box>
               )}
             </Grid>
           </Grid>
@@ -390,22 +390,22 @@ export default function SearchBox(props: ISearchBoxProps) {
               ))}
             </Grid>
             {allResultsToShow < (allRecipes?.length ?? 0) && (
-            <Box sx={{ textAlign: 'center', mt: 2 }}>
-              <Button
-                variant="contained"
-                onClick={loadMoreAllResults}
-                sx={{
-                  backgroundColor: warmGold,
-                  '&:hover': {
-                    backgroundColor: '#C28A45', // Darker gold on hover
-                    transform: 'scale(1.03)', // Slight pop effect
-                    boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.15)', // Soft shadow
-                  },
-                }}
-              >
+              <Box sx={{ textAlign: 'center', mt: 2 }}>
+                <Button
+                  variant="contained"
+                  onClick={loadMoreAllResults}
+                  sx={{
+                    backgroundColor: warmGold,
+                    '&:hover': {
+                      backgroundColor: '#C28A45', // Darker gold on hover
+                      transform: 'scale(1.03)', // Slight pop effect
+                      boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.15)', // Soft shadow
+                    },
+                  }}
+                >
                 Load More
-              </Button>
-            </Box>
+                </Button>
+              </Box>
             )}
           </Grid>
         </Grid>

@@ -77,8 +77,8 @@ export default function RecipeCard(props: RecipeCardProps) {
     <Card
       onClick={handleCardClick}
       sx={{
-        maxWidth: 360,
-        borderRadius: '16px',
+        maxWidth: { xs: '100%', sm: 360 },
+        borderRadius: { xs: '8px', sm: '16px' },
         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
         transition: 'transform 0.2s',
         '&:hover': { transform: 'scale(1.05)' },

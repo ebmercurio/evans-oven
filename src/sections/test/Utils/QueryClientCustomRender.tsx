@@ -23,6 +23,4 @@ const customRender = (
   render(ui, { wrapper: queryClientProvider, ...options });
 };
 
-export * from '@testing-library/react';
-
 export { customRender as render };

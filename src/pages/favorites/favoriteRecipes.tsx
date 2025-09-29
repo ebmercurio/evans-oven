@@ -56,8 +56,8 @@ export default function FavoriteRecipes() {
       <Grid container spacing={1}>
         {favoriteRecipesData?.length ?? 0 > 0 ? (
           favoriteRecipesData?.map((recipe: IRecipe) => (
-            <Grid item xs={12} sm={3}>
-              <RecipeCard key={recipe.id} recipe={recipe} />
+            <Grid item xs={12} sm={3} key={recipe.id}>
+              <RecipeCard recipe={recipe} />
             </Grid>
           ))
         ) : (

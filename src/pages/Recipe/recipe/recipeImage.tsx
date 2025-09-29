@@ -109,18 +109,18 @@ export default function RecipeImage() {
             </Typography>
           </MuiLink>
           {success && (
-          <Box sx={{ mt: 2 }}>
-            <Alert severity="success">
-              {success}
-            </Alert>
-          </Box>
+            <Box sx={{ mt: 2 }}>
+              <Alert severity="success">
+                {success}
+              </Alert>
+            </Box>
           )}
           {errorMessage && (
-          <Box sx={{ mt: 2 }}>
-            <Alert severity="error">
-              {errorMessage}
-            </Alert>
-          </Box>
+            <Box sx={{ mt: 2 }}>
+              <Alert severity="error">
+                {errorMessage}
+              </Alert>
+            </Box>
           )}
         </Grid>
       </Grid>

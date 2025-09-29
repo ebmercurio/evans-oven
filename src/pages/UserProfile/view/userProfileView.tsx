@@ -160,21 +160,21 @@ export default function UserProfileView() {
         </TableCell>
         <TableCell>
           {isEditing && (
-          <Button
-            variant="contained"
-            onClick={handleSubmit}
-            sx={{
-              mx: 1,
-              mb: 1,
-              backgroundColor: primary,
-              '&:hover': {
-                backgroundColor: primary, // Fills button with your primary color on hover
-                opacity: 0.8, // Creates a soft "see-through" effect
-              },
-            }}
-          >
+            <Button
+              variant="contained"
+              onClick={handleSubmit}
+              sx={{
+                mx: 1,
+                mb: 1,
+                backgroundColor: primary,
+                '&:hover': {
+                  backgroundColor: primary, // Fills button with your primary color on hover
+                  opacity: 0.8, // Creates a soft "see-through" effect
+                },
+              }}
+            >
             Save
-          </Button>
+            </Button>
           )}
         </TableCell>
       </TableRow>
@@ -224,11 +224,11 @@ export default function UserProfileView() {
             </Typography>
           </Button>
           {showEmailAlert && (
-          <Box sx={{ mt: 2 }}>
-            <Alert severity="success">
-              {emailLinkMessage}
-            </Alert>
-          </Box>
+            <Box sx={{ mt: 2 }}>
+              <Alert severity="success">
+                {emailLinkMessage}
+              </Alert>
+            </Box>
           )}
         </TableCell>
       </TableRow>
