@@ -13,8 +13,19 @@ const StyledTabs = styled(Tabs)({
     marginRight: '16px',
     color: searchText,
     fontWeight: 'bold',
-    fontSize: '1rem',
+    fontSize: { xs: '0.9rem', sm: '1rem' },
     textTransform: 'uppercase',
+    flex: { xs: 1, sm: 'none' },
+    padding: { xs: '12px 8px', sm: '12px 16px' },
+  },
+  '@media (max-width: 600px)': {
+    width: '100%',
+    display: 'flex',
+    '& .MuiTabs-flexContainer': {
+      width: '100%',
+      display: 'flex',
+      justifyContent: 'space-between',
+    },
   },
   '& .MuiTab-root.Mui-selected': {
     color: secondary,

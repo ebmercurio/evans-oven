@@ -75,11 +75,11 @@ export default function AddRecipeTags({
         ))}
       </Select>
       {errorMessage && (
-      <Box sx={{ mt: 2 }}>
-        <Alert severity="error">
-          {errorMessage}
-        </Alert>
-      </Box>
+        <Box sx={{ mt: 2 }}>
+          <Alert severity="error">
+            {errorMessage}
+          </Alert>
+        </Box>
       )}
     </FormControl>
   );

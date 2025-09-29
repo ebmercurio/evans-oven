@@ -14,10 +14,11 @@ import {
   whiteBackground,
   darkGold,
 } from '../../../Constants';
+import useRouter from '../../../hooks/use-router';
 
 export default function RecipesByTag() {
   const { tagName } = useParams();
-  // const [tag, setTag] = useState<string>();
+  const router = useRouter();
 
   const [latestIndex, setLatestIndex] = useState(0);
   const [popularIndex, setPopularIndex] = useState(0);
@@ -40,14 +41,23 @@ export default function RecipesByTag() {
     if (section === 'all') setAllIndex((prev) => prev + batchSize);
   };
 
-  // useEffect(() => {
-  //   setTag(tagName);
-  // }, [tagName]);
-
   const featuredRecipe = recipesByTag?.[0];
 
+  const handleClick = () => {
+    if (featuredRecipe) { router.push(`/recipe/${featuredRecipe.id}`); }
+  };
+
   const renderRecipeSection = (recipes: IRecipe[], index: number, section: string) => (
-    <Grid container spacing={2} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+    <Grid
+      container
+      spacing={{ xs: 1, sm: 2 }}
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'flex-start',
+        py: { xs: 2, sm: 3 },
+      }}
+    >
       {recipes.slice(0, index + batchSize).map((recipe) => (
         <Grid item xs={12} sm={6} md={4} key={recipe.id} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <RecipeCard recipe={recipe} />
@@ -125,6 +135,7 @@ export default function RecipesByTag() {
                 </Typography>
                 <Button
                   variant="contained"
+                  onClick={handleClick}
                   sx={{
                     backgroundColor: warmGold,
                     '&:hover': {

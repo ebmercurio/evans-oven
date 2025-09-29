@@ -264,7 +264,7 @@ export default function LoginModal(props: ILoginProps) {
               >
                 <CloseIcon />
               </IconButton>
-                )}
+            )}
           >
             <Alert onClose={() => setTriggerFavMessage(false)} severity="error">
               You must be logged in to favorite a recipe!
@@ -285,7 +285,7 @@ export default function LoginModal(props: ILoginProps) {
               >
                 <CloseIcon />
               </IconButton>
-                  )}
+            )}
           >
             <Alert onClose={() => setTriggerCommentMessage(false)} severity="error">
               You must be logged in to comment on a recipe!

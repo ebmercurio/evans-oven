@@ -2,14 +2,14 @@ import { format, getTime, formatDistanceToNow } from 'date-fns';
 
 // ----------------------------------------------------------------------
 
-export function fDate(date: Date, newFormat: any) {
-  const fm = newFormat || 'dd MMM yyyy';
+export function formatTime(date: Date | string, customFormat?: string): string {
+  const fm = customFormat || 'dd MMM yyyy';
 
   return date ? format(new Date(date), fm) : '';
 }
 
-export function fDateTime(date: Date, newFormat: any) {
-  const fm = newFormat || 'dd MMM yyyy p';
+export function fDateTime(date: Date | string, customFormat?: string): string {
+  const fm = customFormat || 'dd MMM yyyy p';
 
   return date ? format(new Date(date), fm) : '';
 }

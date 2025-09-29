@@ -250,7 +250,7 @@ export default function RecipesMain() {
           .map((tag: ITag) => (
             <Grid item key={tag.id}>
               <Button
-                onClick={() => handleCategoryClick(tag.id)}
+                onClick={() => handleCategoryClick(tag.name)}
               >
                 <Chip
                   label={tag.name}

@@ -35,8 +35,8 @@ export default function RecipeComments() {
 
   return (
     <>
-      <Grid container sx={{ display: 'flex' }}>
-        <Grid item xs={6}>
+      <Grid container sx={{ display: 'flex', gap: { xs: 3, sm: 2 } }}>
+        <Grid item xs={12} sm={6}>
           <Stack spacing={1} alignItems="center" justifyContent="center">
             <Typography variant="subtitle2">Average rating</Typography>
 
@@ -77,7 +77,20 @@ export default function RecipeComments() {
             color="inherit"
             onClick={handleOpenCommentForm}
             startIcon={<CreateIcon />}
-            sx={{ maxHeight: '50px' }}
+            sx={{
+              maxHeight: '50px',
+              position: { xs: 'fixed', sm: 'static' },
+              bottom: { xs: '16px', sm: 'auto' },
+              right: { xs: '16px', sm: 'auto' },
+              borderRadius: { xs: '24px', sm: '4px' },
+              boxShadow: { xs: '0 2px 8px rgba(0,0,0,0.15)', sm: 'none' },
+              backgroundColor: { xs: warmGold, sm: 'transparent' },
+              color: { xs: 'white', sm: 'inherit' },
+              zIndex: { xs: 10, sm: 1 },
+              '&:hover': {
+                backgroundColor: { xs: '#C28A45', sm: 'rgba(0,0,0,0.04)' },
+              },
+            }}
           >
             <Typography fontSize="16px" fontWeight={600} color={blackText}>
               Leave a Comment

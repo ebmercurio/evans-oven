@@ -4,8 +4,9 @@ import { forwardRef } from 'react';
 
 const Label = forwardRef(
   () => (
-    <Label />
+    <label />
   ),
 );
 
+Label.displayName = 'Label';
 export default Label;

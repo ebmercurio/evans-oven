@@ -8,6 +8,7 @@ import { useQuery } from '@tanstack/react-query';
 import RecipeCard from '../../../components/RecipeCards/recipeCard';
 import { getAllRecipes } from '../../../services/DbService';
 import { blackText, secondary, whiteBackground } from '../../../Constants';
+import IRecipe from '../../../interfaces/IRecipe';
 
 const StyledTabs = styled(Tabs)({
   borderBottom: `2px solid ${secondary}`,
@@ -54,25 +55,79 @@ export default function HomeBody() {
   // TODO: Create trending, new, and recommended recipes in DB instead of getting all recipes
   const numOfRecipesToShow = 6;
 
+  // Sort by date for new recipes
   const newRecipes = recipesData?.sort(
     (a, b) => new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime(),
   ).slice(0, numOfRecipesToShow);
 
+  // Calculate trending score with time decay
+  const calculateTrendingScore = (recipe: IRecipe) => {
+    const daysSinceCreation = (new Date().getTime() - new Date(recipe.dateCreated).getTime()) / (1000 * 3600 * 24);
+    const timeDecay = Math.exp(-daysSinceCreation / 30); // 30 days half-life
+    return (recipe.favorites * 0.4 + (recipe.averageRating || 0) * 0.6) * timeDecay;
+  };
+
   const trendingRecipes = recipesData?.sort(
-    (a, b) => (b.favorites + b.averageRating) - (a.favorites + a.averageRating),
+    (a, b) => calculateTrendingScore(b) - calculateTrendingScore(a),
   ).slice(0, numOfRecipesToShow);
 
-  const recommendedRecipes = recipesData?.filter(
-    (recipe) => recipe.averageRating >= 4 && recipe.favorites >= 10,
-  ).slice(0, numOfRecipesToShow);
+  // More flexible recommended recipe filtering
+  const recommendedRecipes = recipesData
+    ?.filter(recipe => (
+      // Include highly rated OR frequently favorited recipes
+      recipe.averageRating >= 3.5 || recipe.favorites >= 1
+    ))
+    .sort((a, b) => (
+      // Sort by a combination of rating and favorites
+      (b.averageRating * 2 + b.favorites) - (a.averageRating * 2 + a.favorites)
+    ))
+    .slice(0, numOfRecipesToShow);
+
+  const getTabTitle = () => {
+    switch (tabIndex) {
+    case 0: return 'Trending';
+    case 1: return 'New';
+    case 2: return 'Recommended';
+    default: return 'Recipes';
+    }
+  };
 
   const recipesToDisplay = () => {
-    switch (tabIndex) {
-      case 0: return trendingRecipes;
-      case 1: return newRecipes;
-      case 2: return recommendedRecipes;
-      default: return newRecipes;
+    const recipes = {
+      0: trendingRecipes,
+      1: newRecipes,
+      2: recommendedRecipes,
+    }[tabIndex] || newRecipes;
+
+    if (!recipes?.length) {
+      return (
+        <Grid item xs={12}>
+          <Box sx={{ textAlign: 'center', py: 4 }}>
+            <Typography variant="h6" color="text.secondary">
+              No {getTabTitle().toLowerCase()} recipes available yet
+            </Typography>
+          </Box>
+        </Grid>
+      );
     }
+
+    return recipes.map((recipe) => (
+      <Grid
+        item
+        xs={12}
+        sm={6}
+        md={4}
+        key={recipe.id}
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          padding: 1,
+        }}
+      >
+        <RecipeCard recipe={recipe} />
+      </Grid>
+    ));
   };
 
   return (
@@ -93,23 +148,7 @@ export default function HomeBody() {
             mt: 1,
           }}
         >
-          {recipesToDisplay()?.map((recipe) => (
-            <Grid
-              item
-              xs={12}
-              sm={6}
-              md={4}
-              key={recipe.id}
-              sx={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                padding: 1,
-              }}
-            >
-              <RecipeCard recipe={recipe} />
-            </Grid>
-          ))}
+          {recipesToDisplay()}
         </Grid>
       </Container>
     </Box>

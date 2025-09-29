@@ -13,7 +13,7 @@ import { RHFSelectOption } from '../interfaces/RHFSelectOption';
 import IAmount from '../interfaces/IAmount';
 import INote from '../interfaces/INote';
 import ITag from '../interfaces/ITag';
-import IComment from '../interfaces/IComment';
+import IComment, { ICommentReply } from '../interfaces/IComment';
 import ICategoryCard from '../interfaces/ICategoryCard';
 import IUser from '../interfaces/IUser';
 import IUnit from '../interfaces/IUnit';
@@ -205,7 +205,7 @@ export async function getAllUniqueIngredients() {
   const querySnapshot = await getDocs(ingredientsCollection);
   const data = querySnapshot.docs.map((document) => {
     const documentData = document.data();
-    const ingredient : IIngredient = {
+    const ingredient: IIngredient = {
       id: document.id,
       name: documentData.name,
     };
@@ -218,7 +218,7 @@ export async function getAllAmounts() {
   const querySnapshot = await getDocs(amountsCollection);
   const data = querySnapshot.docs.map((document) => {
     const documentData = document.data();
-    const amount : IAmount = {
+    const amount: IAmount = {
       id: document.id,
       name: documentData.name,
     };
@@ -231,7 +231,7 @@ export async function getAllUnits() {
   const querySnapshot = await getDocs(unitsCollection);
   const data = querySnapshot.docs.map((document) => {
     const documentData = document.data();
-    const unit : IUnit = {
+    const unit: IUnit = {
       id: document.id,
       name: documentData.name,
     };
@@ -244,7 +244,7 @@ export async function getAllNotes() {
   const querySnapshot = await getDocs(ingredientNotesCollection);
   const data = querySnapshot.docs.map((document) => {
     const documentData = document.data();
-    const note : INote = {
+    const note: INote = {
       id: document.id,
       note: documentData.note,
     };
@@ -257,7 +257,7 @@ export async function getAllTags() {
   const querySnapshot = await getDocs(tagsCollection);
   const data = querySnapshot.docs.map((document) => {
     const documentData = document.data();
-    const tag : ITag = {
+    const tag: ITag = {
       id: document.id,
       name: documentData.name,
     };
@@ -269,7 +269,7 @@ export async function getAllTags() {
 export async function getRecipesByTag(tag: string) {
   const queryRecipesDb = query(collection(db, 'Recipes'), where('tags', 'array-contains', tag));
   const querySnapshot = await getDocs(queryRecipesDb);
-  const recipes : IRecipe[] = [];
+  const recipes: IRecipe[] = [];
   querySnapshot.forEach((document) => {
     const documentData = document.data();
     const recipe: IRecipe = {
@@ -301,7 +301,7 @@ export async function getRecipesByTag(tag: string) {
 export async function getRecipesByIngredient(ingredient: string) {
   const queryRecipesDb = query(collection(db, 'Recipes'), where('ingredients', 'array-contains', ingredient));
   const querySnapshot = await getDocs(queryRecipesDb);
-  const recipes : IRecipe[] = [];
+  const recipes: IRecipe[] = [];
   querySnapshot.forEach((document) => {
     const documentData = document.data();
     const recipe: IRecipe = {
@@ -550,7 +550,7 @@ export async function getUserData(authUser: User) {
     // Merge Auth user data with Firestore user data
     console.log(userSnap.data(), 'usersnapdata');
     const firebaseuser = userSnap.data();
-    const userData : IUser = {
+    const userData: IUser = {
       uid: authUser.uid,
       email: authUser.email,
       favorites: firebaseuser.favorites,
@@ -592,9 +592,12 @@ export async function addComment(comment: IComment, recipe: IRecipe): Promise<st
     postedAt: comment.postedAt,
     rating: comment.rating,
     recipeId: recipe.id,
+    likes: [],
+    replies: [],
+    reportCount: 0,
   });
 
-  console.log('New comment ID:', docRef.id); // Check the generated comment ID
+  console.log('New comment ID:', docRef.id);
 
   const updatedRecipe = { ...recipe };
 
@@ -618,6 +621,56 @@ export async function addComment(comment: IComment, recipe: IRecipe): Promise<st
   });
 
   return docRef.id;
+}
+
+export async function toggleCommentLike(commentId: string, userId: string): Promise<boolean> {
+  const commentRef = doc(db, 'Comments', commentId);
+  const commentDoc = await getDoc(commentRef);
+
+  if (!commentDoc.exists()) {
+    throw new Error('Comment not found');
+  }
+
+  const commentData = commentDoc.data();
+  const likes = commentData.likes || [];
+  const hasLiked = likes.includes(userId);
+
+  await updateDoc(commentRef, {
+    likes: hasLiked
+      ? likes.filter((id: string) => id !== userId)
+      : [...likes, userId],
+  });
+
+  return !hasLiked;
+}
+
+export async function addCommentReply(commentId: string, reply: ICommentReply): Promise<void> {
+  const commentRef = doc(db, 'Comments', commentId);
+  const commentDoc = await getDoc(commentRef);
+
+  if (!commentDoc.exists()) {
+    throw new Error('Comment not found');
+  }
+
+  await updateDoc(commentRef, {
+    replies: arrayUnion(reply),
+  });
+}
+
+export async function reportComment(commentId: string): Promise<void> {
+  const commentRef = doc(db, 'Comments', commentId);
+  const commentDoc = await getDoc(commentRef);
+
+  if (!commentDoc.exists()) {
+    throw new Error('Comment not found');
+  }
+
+  const commentData = commentDoc.data();
+  const currentReports = commentData.reportCount || 0;
+
+  await updateDoc(commentRef, {
+    reportCount: currentReports + 1,
+  });
 }
 
 export async function updateRecipe(recipe: IRecipe) {

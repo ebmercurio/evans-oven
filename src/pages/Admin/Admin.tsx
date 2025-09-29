@@ -105,10 +105,10 @@ export default function AdminPage() {
         </Grid>
 
         {openAddRecipeForm && (
-        <AddRecipeForm
-          openBool={openAddRecipeForm}
-          onClose={() => setOpenAddRecipeForm(false)}
-        />
+          <AddRecipeForm
+            openBool={openAddRecipeForm}
+            onClose={() => setOpenAddRecipeForm(false)}
+          />
         )}
       </Container>
     </Box>

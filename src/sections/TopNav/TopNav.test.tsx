@@ -5,12 +5,12 @@ import { MemoryRouter } from 'react-router';
 import TopNav from './TopNav';
 
 test('TopNav renders', async () => {
-    render(
-        <MemoryRouter>
-            <TopNav />
-        </MemoryRouter>,
-    );
+  render(
+    <MemoryRouter>
+      <TopNav />
+    </MemoryRouter>,
+  );
 
-    const topNavLogo = await screen.findByTestId('logoButton');
-    expect(topNavLogo).toBeInTheDocument();
+  const topNavLogo = await screen.findByTestId('logoButton');
+  expect(topNavLogo).toBeInTheDocument();
 });

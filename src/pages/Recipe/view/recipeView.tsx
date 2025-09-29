@@ -17,7 +17,7 @@ export default function RecipeView() {
       <Box sx={{ backgroundColor: whiteBackground }}>
         <Container sx={{ backgroundColor: whiteBackground }}>
           <Card sx={{ backgroundColor: whiteBackground }}>
-            <Grid container spacing={1} display="flex">
+            <Grid container spacing={{ xs: 2, sm: 1 }} display="flex">
               <Grid
                 item
                 xs={12}
