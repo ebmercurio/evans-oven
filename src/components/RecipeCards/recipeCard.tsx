@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
 import IRecipe from '../../interfaces/IRecipe';
 import { updateUserFavorites } from '../../services/DbService';
+import { trackRecipeEvent, trackError } from '../../services/analytics';
 import { useAuth } from '../../contexts/AuthContext';
 import { useModal } from '../../providers/ModalProvider';
 import {
@@ -47,15 +48,25 @@ export default function RecipeCard(props: RecipeCardProps) {
       });
 
       setIsFavorited((prev) => !prev);
+
+      // Track favorite/unfavorite action
+      trackRecipeEvent(
+        updatedFavorites.includes(recipe.id) ? 'favorite' : 'unfavorite',
+        recipe.id,
+        recipe.title
+      );
     } else if (currentUser && auth.currentUser?.emailVerified === false) {
       setTriggerEmailVerifyMessage(true);
+      trackError('favorite_error', 'Email not verified');
     } else {
       setTriggerFavMessage(true);
       setShowLoginModal(true);
+      trackError('favorite_error', 'User not logged in');
     }
   };
 
   const handleCardClick = () => {
+    trackRecipeEvent('view', recipe.id, recipe.title);
     router.push(`/recipe/${recipe.id}`);
   };
 
@@ -77,16 +88,18 @@ export default function RecipeCard(props: RecipeCardProps) {
     <Card
       onClick={handleCardClick}
       sx={{
+        width: '100%',
         maxWidth: { xs: '100%', sm: 360 },
         borderRadius: { xs: '8px', sm: '16px' },
         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
         transition: 'transform 0.2s',
         '&:hover': { transform: 'scale(1.05)' },
+        minHeight: { xs: 'auto', sm: 380 }, // Fixed minimum height
         height: '100%',
         display: 'flex',
         backgroundColor: cardBackground,
         flexDirection: 'column',
-        justifyContent: 'space-between',
+        justifyContent: 'flex-start', // Changed from space-between
       }}
     >
       <CardMedia

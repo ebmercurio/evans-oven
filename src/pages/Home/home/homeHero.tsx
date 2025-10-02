@@ -4,6 +4,7 @@ import {
 } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import { trackCategoryEvent } from '../../../services/analytics';
 import { motion } from 'framer-motion';
 import {
   cursiveFont,
@@ -55,6 +56,7 @@ export default function HomeHero() {
   }
 
   const handleCategoryClick = (tagName: string) => {
+    trackCategoryEvent('view', tagName);
     const linkTo = paths.recipe.tagName(tagName);
     router.push(linkTo);
   };
