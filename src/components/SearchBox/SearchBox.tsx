@@ -1,6 +1,7 @@
 import {
   useState, useEffect, Dispatch, SetStateAction,
 } from 'react';
+import { trackSearchEvent, trackRecipeEvent } from '../../services/analytics';
 import {
   Dialog, Box, InputBase, InputAdornment, useTheme, Divider, Grid, Typography, Button,
   dialogClasses,
@@ -66,19 +67,28 @@ export default function SearchBox(props: ISearchBoxProps) {
     setSearchQuery('');
   };
 
+  const handleRecipeClick = (recipe: IRecipe) => {
+    trackRecipeEvent('click_from_search', recipe.id, recipe.title);
+    handleShowSearch();
+  };
+
   const loadMoreLatestResults = () => {
+    trackSearchEvent('load_more', 'latest_recipes', latestResultsToShow + 8);
     setLatestResultsToShow(latestResultsToShow + 8);
   };
 
   const loadMoreAllResults = () => {
+    trackSearchEvent('load_more', 'all_recipes', allResultsToShow + 8);
     setAllResultsToShow(allResultsToShow + 8);
   };
 
   const loadMorePopularResults = () => {
+    trackSearchEvent('load_more', 'popular_recipes', popularResultsToShow + 8);
     setPopularResultsToShow(popularResultsToShow + 8);
   };
 
   const loadMoreResults = () => {
+    trackSearchEvent('load_more', 'search_results', resultsToShow + 8);
     setResultsToShow(resultsToShow + 8);
   };
 
@@ -107,13 +117,17 @@ export default function SearchBox(props: ISearchBoxProps) {
   }
 
   useEffect(() => {
-    if (open) {
+    if (open && searchQuery.trim()) {
       const fetchResults = () => {
         const results = searchRecipes(searchQuery);
         setSearchResults(results);
+        // Track search with result count
+        trackSearchEvent('perform_search', searchQuery, results.length);
       };
 
-      fetchResults();
+      // Debounce search tracking to avoid excessive events
+      const timeoutId = setTimeout(fetchResults, 300);
+      return () => clearTimeout(timeoutId);
     }
   }, [searchQuery]);
 
@@ -233,7 +247,9 @@ export default function SearchBox(props: ISearchBoxProps) {
                   <Grid item xs={6} sm={4} md={3} key={recipe.id}>
                     <RecipeMiniCard
                       recipe={recipe}
-                      setShowSearch={handleShowSearch}
+                      setShowSearch={() => {
+                        handleRecipeClick(recipe);
+                      }}
                     />
                   </Grid>
                 ))}
@@ -384,7 +400,9 @@ export default function SearchBox(props: ISearchBoxProps) {
                 <Grid item xs={12} sm={4} md={3} key={recipe.id}>
                   <RecipeMiniCard
                     recipe={recipe}
-                    setShowSearch={handleShowSearch}
+                    setShowSearch={() => {
+                      handleRecipeClick(recipe);
+                    }}
                   />
                 </Grid>
               ))}

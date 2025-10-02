@@ -8,6 +8,7 @@ import {
 import CreateIcon from '@mui/icons-material/Create';
 import { useState } from 'react';
 import { fShortenNumber } from '../../../utils/format-number';
+import { trackRecipeEvent, trackError } from '../../../services/analytics';
 import RecipeCommentList from './recipeCommentList';
 import AddCommentForm from './addCommentForm';
 import { useRecipeContext } from '../../../providers/CurrentRecipeProvider';
@@ -26,8 +27,10 @@ export default function RecipeComments() {
 
   const handleOpenCommentForm = () => {
     if (auth.currentUser && auth.currentUser.emailVerified) {
+      trackRecipeEvent('open_comment_form', currentRecipe.id, currentRecipe.title);
       setOpenAddCommentForm(true);
     } else {
+      trackError('comment_error', auth.currentUser ? 'Email not verified' : 'User not logged in');
       setShowLoginModal(true);
       setTriggerCommentMessage(true);
     }

@@ -8,15 +8,28 @@ import { getAllRecipes, getAllTags } from '../../../services/DbService';
 import RecipeCard from '../../../components/RecipeCards/recipeCard';
 import { blackText, secondary, whiteBackground } from '../../../Constants';
 
-const StyledTabs = styled(Tabs)({
+const StyledTabs = styled(Tabs)(() => ({
   borderBottom: `2px solid ${secondary}`,
+  maxWidth: '100%',
+  overflowX: 'auto',
+  '& .MuiTabs-flexContainer': {
+    gap: '8px',
+    '@media (max-width: 600px)': {
+      gap: '4px',
+    },
+  },
   '& .MuiTab-root': {
     minWidth: 'auto',
-    marginRight: '16px',
+    padding: '12px 16px',
     color: blackText,
     fontWeight: 'bold',
     fontSize: '1rem',
     textTransform: 'uppercase',
+    '@media (max-width: 600px)': {
+      fontSize: '0.875rem',
+      padding: '8px 12px',
+      minHeight: '40px',
+    },
   },
   '& .MuiTab-root.Mui-selected': {
     color: secondary,
@@ -24,7 +37,13 @@ const StyledTabs = styled(Tabs)({
   '& .MuiTabs-indicator': {
     backgroundColor: secondary,
   },
-});
+  // Hide scrollbar but keep functionality
+  '&::-webkit-scrollbar': {
+    display: 'none',
+  },
+  scrollbarWidth: 'none',
+  '-ms-overflow-style': 'none',
+}));
 
 export default function HomeBottom() {
   const [selectedTagIndex, setSelectedTagIndex] = useState(0);
@@ -165,15 +184,57 @@ export default function HomeBottom() {
       py: 4,
     }}
     >
-      <Container>
-        <StyledTabs value={selectedTagIndex} onChange={handleTabChange}>
-          {popularTags.map((tag) => (
-            <Tab key={tag.id} label={tag.name} />
-          ))}
-        </StyledTabs>
-        <Grid container spacing={3} sx={{ marginTop: '24px' }}>
+      <Container maxWidth="lg" sx={{ px: { xs: 1, sm: 2, md: 3 } }}>
+        <Box sx={{ 
+          maxWidth: '100%',
+          overflowX: 'auto',
+          scrollbarWidth: 'none',
+          '&::-webkit-scrollbar': {
+            display: 'none'
+          },
+          '-ms-overflow-style': 'none'
+        }}>
+          <StyledTabs 
+            value={selectedTagIndex} 
+            onChange={handleTabChange}
+            variant="scrollable"
+            scrollButtons="auto"
+            aria-label="recipe categories"
+          >
+            {popularTags.map((tag) => (
+              <Tab 
+                key={tag.id} 
+                label={tag.name}
+                sx={{
+                  whiteSpace: 'nowrap',
+                  minWidth: { xs: '120px', sm: 'auto' }
+                }}
+              />
+            ))}
+          </StyledTabs>
+        </Box>
+        <Grid 
+          container 
+          spacing={{ xs: 2, sm: 3 }} 
+          sx={{ 
+            marginTop: { xs: '16px', sm: '24px' },
+            width: '100%',
+            mx: 'auto'
+          }}
+        >
           {displayRecipes.map((recipe) => (
-            <Grid item key={recipe.id} xs={12} sm={6} md={4} lg={3}>
+            <Grid 
+              item 
+              key={recipe.id} 
+              xs={6} 
+              sm={6} 
+              md={4} 
+              lg={3}
+              sx={{
+                display: 'flex',
+                justifyContent: 'center'
+              }}
+            >
               <RecipeCard recipe={recipe} />
             </Grid>
           ))}

@@ -55,32 +55,59 @@ export default function HomeBody() {
   // TODO: Create trending, new, and recommended recipes in DB instead of getting all recipes
   const numOfRecipesToShow = 6;
 
-  // Sort by date for new recipes
-  const newRecipes = recipesData?.sort(
-    (a, b) => new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime(),
-  ).slice(0, numOfRecipesToShow);
+  if (!recipesData) {
+    return null;
+  }
 
-  // Calculate trending score with time decay
+  // Get the date 30 days ago
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+  // For new recipes, only show recipes from the last 30 days
+  const newRecipes = [...recipesData]
+    .filter(recipe => new Date(recipe.dateCreated) > thirtyDaysAgo)
+    .sort((a, b) => new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime())
+    .slice(0, numOfRecipesToShow);
+
+  // For trending, focus more on interaction metrics and less on time
   const calculateTrendingScore = (recipe: IRecipe) => {
     const daysSinceCreation = (new Date().getTime() - new Date(recipe.dateCreated).getTime()) / (1000 * 3600 * 24);
-    const timeDecay = Math.exp(-daysSinceCreation / 30); // 30 days half-life
-    return (recipe.favorites * 0.4 + (recipe.averageRating || 0) * 0.6) * timeDecay;
+    
+    // Only apply time decay after 7 days
+    const timeDecay = daysSinceCreation > 7 
+      ? Math.exp(-(daysSinceCreation - 7) / 60) // 60 days half-life after first week
+      : 1.0; // No decay in first week
+    
+    // Engagement metrics
+    const favoriteScore = (recipe.favorites || 0) * 2; // More weight on favorites
+    const ratingScore = (recipe.averageRating || 0) * (recipe.commentsWithRatings || 1); // Rating weighted by number of ratings
+    const commentScore = (recipe.comments?.length || 0) * 1.5;
+    
+    return (favoriteScore + ratingScore + commentScore) * timeDecay;
   };
 
-  const trendingRecipes = recipesData?.sort(
-    (a, b) => calculateTrendingScore(b) - calculateTrendingScore(a),
-  ).slice(0, numOfRecipesToShow);
+  const trendingRecipes = [...recipesData]
+    .sort((a, b) => calculateTrendingScore(b) - calculateTrendingScore(a))
+    .slice(0, numOfRecipesToShow);
 
-  // More flexible recommended recipe filtering
-  const recommendedRecipes = recipesData
-    ?.filter(recipe => (
-      // Include highly rated OR frequently favorited recipes
-      recipe.averageRating >= 3.5 || recipe.favorites >= 1
-    ))
-    .sort((a, b) => (
-      // Sort by a combination of rating and favorites
-      (b.averageRating * 2 + b.favorites) - (a.averageRating * 2 + a.favorites)
-    ))
+  // More flexible recommended recipe filtering - different from trending
+  const recommendedRecipes = [...recipesData]
+    .filter(recipe => {
+      const hasGoodRating = recipe.averageRating >= 3.5;
+      const hasFavorites = recipe.favorites >= 1;
+      const hasComments = recipe.comments?.length >= 2;
+      // Must meet at least two criteria
+      return [hasGoodRating, hasFavorites, hasComments].filter(Boolean).length >= 2;
+    })
+    .sort((a, b) => {
+      // Complex score factoring in all aspects
+      const getScore = (r: IRecipe) => (
+        (r.averageRating * 3) + 
+        (r.favorites * 2) + 
+        ((r.comments?.length || 0) * 0.5)
+      );
+      return getScore(b) - getScore(a);
+    })
     .slice(0, numOfRecipesToShow);
 
   const getTabTitle = () => {

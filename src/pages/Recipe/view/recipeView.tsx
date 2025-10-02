@@ -9,8 +9,17 @@ import RecipeDetails from '../recipe/recipeDetails'; // Contains instructions, c
 import { CurrentRecipeProvider } from '../../../providers/CurrentRecipeProvider';
 import { grey, whiteBackground } from '../../../Constants';
 
+import { useEffect } from 'react';
+import { trackRecipeEvent } from '../../../services/analytics';
+
 export default function RecipeView() {
   const { documentId } = useParams();
+
+  useEffect(() => {
+    if (documentId) {
+      trackRecipeEvent('view', documentId, '');
+    }
+  }, [documentId]);
 
   return (
     <CurrentRecipeProvider documentId={documentId}>
